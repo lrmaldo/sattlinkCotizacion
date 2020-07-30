@@ -2,8 +2,10 @@
 
 namespace App;
 
+
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Psy\Util\Json;
 
 class User extends Authenticatable
 {
@@ -24,23 +26,26 @@ class User extends Authenticatable
     {
         return $this->belongsTo('App\cotizaciones', 'id');
     }
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
-
-
 
     public function roles()
-        {
-    return $this
-        ->belongsToMany('App\roles')
+{
+     return $this
+        ->belongsToMany('App\Role')
         ->withTimestamps();
-        }
+}
+
+public function nombre_rol(){
+    $rol = $this->hasOne('App\role_user','id');
+    
+    return $rol;
+//return $rol;
+    //return $this->belongsTo('\App\role',$rol); 
+//return $this->belongsTo('App\role','id');
+}
+public function rol_user($id){
+
+    return $this->roles()->where('user_id', $id)->first();
+}
 
 public function authorizeRoles($roles)
 {
@@ -71,4 +76,6 @@ public function hasRole($role)
     }
     return false;
 }
+
+  
 }

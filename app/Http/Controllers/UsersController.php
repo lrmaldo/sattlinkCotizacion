@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\User;
+use App\roles;
+use App\roles_user;
 
 class UsersController extends Controller
 {
@@ -13,7 +16,9 @@ class UsersController extends Controller
      */
     public function index()
     {
-        //
+
+        $users = User::all();
+        return view('usuarios.index',compact('users'));
     }
 
     /**

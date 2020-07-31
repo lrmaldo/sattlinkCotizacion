@@ -22,3 +22,11 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('/usuarios','UsersController');
+//Route::delete('/usuarios/destroy/{id}','UsersController@destroy');
+
+Route::get('/usuarios/destroy/{id}',[
+'as' =>'usuarios.destroy',
+'uses'=>'UsersController@destroy'
+]);
+
+Route::resource('/clientes','ClientesController');

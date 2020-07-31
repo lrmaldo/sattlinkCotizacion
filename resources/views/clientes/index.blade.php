@@ -3,14 +3,14 @@
 @section('content')
 
     <div class="container-fluid">
-        <h1 class="mt-4">Usuarios</h1>
+        <h1 class="mt-4">Clientes</h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item "><a href="/home">Dashboard</a></li>
-            <li class="breadcrumb-item active">Usuarios</li>
+            <li class="breadcrumb-item active">Clientes</li>
         </ol>
 
         <div class="card-body">
-            <a href="{{ url('usuarios/create') }}" class="btn btn-success btn-xs"> <i class="fas fa-user-plus" aria-hidden="true"></i> Agregar usuario </a>
+            <a href="{{ url('clientes/create') }}" class="btn btn-success btn-xs"> <i class="fas fa-user-plus" aria-hidden="true"></i> Agregar Cliente </a>
            <div style="margin: 10px"></div>
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -18,8 +18,11 @@
                         <tr>
                             <th>Id</th>
                             <th>Nombre</th>
-                            <th>Correo</th>
-                            <th>Rol</th>
+                            <th>Telefono</th>
+                            <th>Dirección</th>
+                            <th>Descuento</th>
+                            <th>Fecha de creación</th>
+                            <th>Estatus</th>
                             <th>Acciones</th>
 
                         </tr>
@@ -28,21 +31,28 @@
                         <tr>
                             <th>Id</th>
                             <th>Nombre</th>
-                            <th>Correo</th>
-                            <th>Rol</th>
+                            <th>Telefono</th>
+                            <th>Dirección</th>
+                            <th>Descuento</th>
+                            <th>Fecha de creación</th>
+                            <th>Estatus</th>
                             <th>Acciones</th>
                         </tr>
                     </tfoot>
                     <tbody>
-                        @foreach($users as $item)
+                        @foreach($clientes as $item)
                             <tr>
 
                                 <td>{{ $item->id }}</td>
-                                <td>{{ $item->name }}</td>
-                                <td>{{ $item->email }}</td>
+                                <td>{{ $item->nombre }}</td>
+                                <td>{{ $item->telefono }}</td>
+                                <td>{{ $item->direccion }}</td>
+                                <td>{{ $item->descuento *100}}%</td>
+                                <td>{{ $item->created_at }}</td>
+                                <td>{{ $item->estatus }}</td>
                                
-                                <td>{{$item->rol_user($item->id)->name}}</td>
-                                <td><a href="{{ route('usuarios.edit',['id'=>$item->id]) }}" class="btn btn-info btn-xs"> <i class="fa fa-edit" aria-hidden="true"></i> </a>
+                                
+                                <td><a href="{{ route('clientes.edit',['id'=>$item->id]) }}" class="btn btn-info btn-xs"> <i class="fa fa-edit" aria-hidden="true"></i> </a>
                                    {{--  <a href="{{ route('usuarios.destroy',$item->id) }}" class="btn btn-danger btn-xs"> <i class="fa fa-trash" aria-hidden="true" onclick="return confirm('Deseas eliminarlo')"></i> </a> --}}
                                     
                                 </td>

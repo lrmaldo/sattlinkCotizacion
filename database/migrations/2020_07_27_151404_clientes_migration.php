@@ -18,7 +18,7 @@ class ClientesMigration extends Migration
             $table->engine ='InnoDB';
             $table->increments('id');
             $table->string('nombre');
-            $table->string('estatus')->comment('activar o desactivar producto');
+            $table->string('estatus')->default('activo')->comment('activar o desactivar producto');
             $table->string('email')->nullable();
             $table->string('direccion')->nullable();
             $table->string('telefono');

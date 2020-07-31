@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
-use App\roles;
+use App\Role;
 use App\roles_user;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 
 class UsersController extends Controller
 {
@@ -14,6 +16,12 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
 
@@ -28,7 +36,8 @@ class UsersController extends Controller
      */
     public function create()
     {
-        //
+        $roles = Role::all();
+        return view('usuarios.create',compact('roles'));
     }
 
     /**
@@ -39,7 +48,16 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+       // return $request->all();
+       $role_user = Role::where('name', $request->rol)->first();
+       $user = new User();
+       $user->name = $request->nombre;
+       $user->email = $request->correo;
+       $user->password = bcrypt($request->contra);
+       $user->save();
+       $user->roles()->attach($role_user);
+       return Redirect::to('/usuarios');
     }
 
     /**
@@ -61,7 +79,11 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::find($id);
+        $roles = Role::all();
+        
+       
+        return view('usuarios.edit',compact('user','roles'));
     }
 
     /**
@@ -73,7 +95,18 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+       $user = User::find($id);
+
+       $role_user = Role::where('name', $request->rol)->first();
+       $user->name = $request->nombre;
+       $user->email = $request->correo;
+       if($request->contra){
+       $user->password = bcrypt($request->contra);
+        }
+       $user->save();
+       $user->roles()->attach($role_user);
+       return Redirect::to('/usuarios');
+
     }
 
     /**
@@ -84,6 +117,7 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
-        //
+       User::destroy($id);
+       return Redirect::to('/usuarios');
     }
 }

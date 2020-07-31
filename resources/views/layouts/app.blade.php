@@ -11,18 +11,19 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'SattLink') }}</title>
+    <title>Sattlink - Cotización</title>
 
     <!-- Styles -->
     {{--  <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('css/styles.css') }} " rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous">
     </script>
 </head>
 
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark" style="background-color: darkorange">
-        <a class="navbar-brand" href="index.html">Sattlink</a>
+        <a class="navbar-brand" href="/home">Sattlink</a>
         <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i
                 class="fas fa-bars"></i></button>
         <!-- Navbar Search-->
@@ -121,10 +122,10 @@
                                 </div>
                             </nav>
                         </div>
-                        <div class="sb-sidenav-menu-heading">Addons</div>
-                        <a class="nav-link" href="charts.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                            Charts
+                        <div class="sb-sidenav-menu-heading"></div>
+                        <a class="nav-link" href="/clientes">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                            Clientes
                         </a>
                         <a class="nav-link" href="/usuarios">
                             <div class="sb-nav-link-icon"><i class="fas fa-id-card"></i></div>
@@ -142,6 +143,7 @@
             <main>
                 @yield('content')
             </main>
+        </div>
 
             <!-- Scripts -->
             {{--   <script src="{{ asset('js/app.js') }}"></script> --}}
@@ -154,7 +156,7 @@
             </script>
             <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous">
             </script>
-           {{--  <script src="{{ asset('assets/demo/datatables-demo.js')}}"></script> --}}
+            <script src="{{ asset('assets/demo/datatables-demo.js')}}"></script>
 </body>
 
 </html>

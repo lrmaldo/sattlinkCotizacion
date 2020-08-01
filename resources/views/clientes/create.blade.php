@@ -5,7 +5,7 @@
 <div class="container-fluid">
     <h1 class="mt-4">Nuevo Cliente</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item "><a href="/Clientes">Clientes</a></li>
+        <li class="breadcrumb-item "><a href="/clientes">Clientes</a></li>
         <li class="breadcrumb-item active">Crear Cliente</li>
     </ol>
 
@@ -45,6 +45,11 @@
               <div class="form-group col-md-6">
                 <label for="inputEmail4">Teléfono</label>
                 <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Escribe el teléfono del cliente" >
+              </div>
+
+              <div class="form-group col-md-6">
+                <label for="inputPassword4">RFC</label>
+                <input type="text" class="form-control" id="rfc" name="rfc" placeholder="RFC del cliente" >
               </div>
               
             </div>

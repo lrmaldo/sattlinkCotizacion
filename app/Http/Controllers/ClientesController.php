@@ -63,8 +63,9 @@ class ClientesController extends Controller
         $cliente->direccion = $request->direccion;
         $cliente->telefono = $request->telefono;
         $cliente->descuento = $request->porcentaje;
+        $cliente->rfc = $request->rfc;
         $cliente->save();
-        return Redirect::to('/clientes'); 
+        return redirect('clientes')->with('success','¡Se creo correctamente el cliente!');
 
 
     }
@@ -104,7 +105,7 @@ class ClientesController extends Controller
 
         $messages = [
             'required' => 'el :attribute es requerido',
-            'unique' =>'el correo ya existe'
+            'email' =>'el correo ya existe'
         ];
         $validator = Validator::make($request->all(), [
             'nombre' => 'required',
@@ -119,8 +120,10 @@ class ClientesController extends Controller
         $cliente->direccion = $request->direccion;
         $cliente->telefono = $request->telefono;
         $cliente->descuento = $request->porcentaje;
+        $cliente->rfc = $request->rfc;
         $cliente->save();
-        return Redirect::to('/clientes');
+        return redirect('clientes')->with('success','¡Se a actualizado el cliente correctamente!');
+
     }
 
     /**
@@ -132,6 +135,6 @@ class ClientesController extends Controller
     public function destroy($id)
     {
         clientes::destroy($id);
-        return Redirect::to("/clientes");
+        return redirect('clientes')->with('success','¡Se a eliminado el cliente correctamente!');
     }
 }

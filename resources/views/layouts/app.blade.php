@@ -19,6 +19,10 @@
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous">
     </script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"
+    crossorigin="anonymous"></script>
 </head>
 
 <body class="sb-nav-fixed">
@@ -120,9 +124,17 @@
                                         <a class="nav-link" href="500.html">500 Page</a>
                                     </nav>
                                 </div>
-                            </nav>
+                            </nav>	
                         </div>
                         <div class="sb-sidenav-menu-heading"></div>
+                        <a class="nav-link" href="/productos">
+                            <div class="sb-nav-link-icon"><i class="fas fa-satellite-dish"></i></div>
+                            Productos
+                        </a>
+                        <a class="nav-link" href="/unidad">
+                            <div class="sb-nav-link-icon"><i class="fas fa-ruler-combined"></i></div>
+                            Unidad de medida
+                        </a>
                         <a class="nav-link" href="/clientes">
                             <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                             Clientes
@@ -141,15 +153,15 @@
         </div>
         <div id="layoutSidenav_content">
             <main>
+                @include('flash-message')
                 @yield('content')
+                
             </main>
         </div>
 
             <!-- Scripts -->
             {{--   <script src="{{ asset('js/app.js') }}"></script> --}}
-            <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"
-                crossorigin="anonymous"></script>
+          
             <script src="{{ asset('js/scripts.js') }}"></script>
 
             <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous">

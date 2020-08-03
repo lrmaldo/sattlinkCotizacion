@@ -18,7 +18,7 @@
           </span>
 
         <div class="card-body">
-            <a href="{{ url('productos/create') }}" class="btn btn-success btn-xs"> <i class="fas fa-pen" aria-hidden="true"></i> Agregar Producto o Servicio </a>
+            <a href="{{ route('productos.create') }}" class="btn btn-success btn-xs"> <i class="fas fa-pen" aria-hidden="true"></i> Agregar Producto o Servicio </a>
            <div style="margin: 10px"></div>
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">

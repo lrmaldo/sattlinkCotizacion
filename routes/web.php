@@ -39,6 +39,14 @@ Route::resource('/clientes','ClientesController');
 
 
 Route::get('/productos','ProductosController@index');
+Route::get('/productos/create',[
+    'as' =>'productos.create',
+    'uses'=>'ProductosController@create'
+    ]);
+    Route::post('/productos/store',[
+        'as' =>'productos.store',
+        'uses'=>'ProductosController@store'
+        ]);
 
 Route::get('/productos/{id}',[
     'as' =>'productos.update',
@@ -71,3 +79,25 @@ Route::get('/unidad/destroy/{id}',[
     'as' =>'unidad.destroy',
     'uses'=>'UnidadController@destroy'
     ]);
+
+    /* ruta de datos fiscales */
+Route::get('/datos','DatosfiscalesController@index');
+Route::post('/datos',[
+    'as' =>'datos.store',
+    'uses'=>'DatosfiscalesController@store'
+    ]);
+
+Route::get('/datos/{id}',[
+    'as' =>'datos.update',
+    'uses'=>'DatosfiscalesController@update'
+    ]);
+
+Route::get('/datos/destroy/{id}',[
+    'as' =>'datos.destroy',
+    'uses'=>'DatosfiscalesController@destroy'
+    ]);
+
+Route::get('/impuesto/{id}',[
+        'as' =>'datos.impuesto',
+        'uses'=>'DatosfiscalesController@impuesto'
+        ]);

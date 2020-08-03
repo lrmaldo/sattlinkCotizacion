@@ -87,13 +87,13 @@
                                 <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
                             </nav>
                         </div>
-                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                        {{-- <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                             aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                             Pages
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
+                        </a> --}}
+                      {{--   <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
                             data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                 <a class="nav-link collapsed" href="#" data-toggle="collapse"
@@ -125,7 +125,7 @@
                                     </nav>
                                 </div>
                             </nav>	
-                        </div>
+                        </div> --}}
                         <div class="sb-sidenav-menu-heading"></div>
                         <a class="nav-link" href="/productos">
                             <div class="sb-nav-link-icon"><i class="fas fa-satellite-dish"></i></div>
@@ -143,10 +143,14 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-id-card"></i></div>
                             Usuarios
                         </a>
+                        <a class="nav-link" href="/datos">
+                            <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                            Datos fiscales
+                        </a>
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
-                    <div class="small">Logged in as:</div>
+                    <div class="small">Logeado como:</div>
                     {{ Auth::user()->name }}
                 </div>
             </nav>
@@ -157,6 +161,18 @@
                 @yield('content')
                 
             </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Sattlink <script> document.write(new Date().getFullYear());</script></div>
+                        <div>
+                            <a href="#">Política de privacidad</a>
+                            &middot;
+                            <a href="#">Terminos &amp; Condiciones</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
 
             <!-- Scripts -->

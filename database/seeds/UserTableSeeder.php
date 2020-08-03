@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\User;
 use App\Role;
+use App\impuestos;
 
 class UserTableSeeder extends Seeder
 {
@@ -27,5 +28,9 @@ class UserTableSeeder extends Seeder
         $user->password = bcrypt('secret');
         $user->save();
         $user->roles()->attach($role_admin);
+
+        $impuesto = new impuestos();
+        $impuesto->cantidad = 16 ;
+        $impuesto->save();
     }
 }

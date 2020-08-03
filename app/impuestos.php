@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class impuestos extends Model
 {
- protected $table = "impuestos";
+ protected $table = "impuesto";
     protected $fillable = [
         'id', 'cantidad',
 

@@ -3,14 +3,7 @@
 @section('content')
 
 
-<span class="help-block">
-  @if(count($errors)>0)
-  @foreach ($errors->all() as $error)
-  <strong style="color: red">{{ $error }}</strong> <br>
-      
-  @endforeach
-  @endif  
-</span>
+
 
 <div class="container-fluid">
     <h1 class="mt-4">Nuevo Producto o Servicio</h1>
@@ -34,6 +27,14 @@
                 </div>
               
               </div>
+              <span class="help-block">
+                @if(count($errors)>0)
+                @foreach ($errors->all() as $error)
+                <strong style="color: red">{{ $error }}</strong> <br>
+                    
+                @endforeach
+                @endif  
+              </span>
 
               <div class="form-row">
                 <div class="form-group col-md-6">
@@ -56,7 +57,7 @@
                
                 <div class="form-group col-md-4">
                   <label for="inputState">Unidad</label>
-                  <select id="unidad" class="form-control">
+                  <select id="unidad" name="unidad" class="form-control">
                     <option selected>Selecciona...</option>
                     @foreach ($unidades as $item)
                   <option value="{{$item->nombre}}">{{$item->nombre}}</option>

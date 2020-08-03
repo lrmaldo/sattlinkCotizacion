@@ -20,7 +20,7 @@ class ClientesMigration extends Migration
             $table->string('nombre');
             $table->string('rfc')->nullable();
             $table->string('estatus')->default('activo')->comment('activar o desactivar producto');
-            $table->string('email')->nullable();
+            $table->string('email')->nullable()->unique();
             $table->string('direccion')->nullable();
             $table->string('telefono');
             $table->double('descuento',8,2);

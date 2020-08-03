@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUnidadsTable extends Migration
+class CreateDatosfiscalesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class CreateUnidadsTable extends Migration
      */
     public function up()
     {
-        Schema::create('unidad', function (Blueprint $table) {
+        Schema::create('datosfiscales', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre');
+            $table->string('nombre',455)->unique();
+            $table->string('rfc')->unique();
+            $table->text('direccion');
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ class CreateUnidadsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('unidad');
+        Schema::dropIfExists('datosfiscales');
     }
 }

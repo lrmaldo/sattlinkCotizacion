@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\productos;
 use App\unidad;
+use Illuminate\Support\Facades\Validator;
 
 class ProductosController extends Controller
 {
@@ -16,7 +17,8 @@ class ProductosController extends Controller
     public function index()
     {
         $productos = productos::all();
-        return view('productos.index',compact('productos'));
+        $unidades = unidad::all();
+        return view('productos.index',compact('productos','unidades'));
     }
 
     /**
@@ -38,7 +40,34 @@ class ProductosController extends Controller
      */
     public function store(Request $request)
     {
-        //
+     
+        $messages = [
+            'required' => 'el :attribute es requerido',
+            'unique' =>'el codigo existe'
+        ];
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required',
+            'precio'=> 'required',
+            'unidad'=> 'required',
+            
+        ],$messages);
+
+
+ 
+        if ($validator->fails()) {
+            return redirect('productos/create')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+     
+      $producto = new productos();
+      $producto->nombre  = $request->nombre;
+      $producto->codigo = $request->codigo;
+      $producto->precio = $request->precio;
+      $producto->unidad = $request->unidad;
+      $producto->save();
+
+      return redirect('productos')->with('success','¡Se creo correctamente el producto!');
     }
 
     /**
@@ -72,7 +101,33 @@ class ProductosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $messages = [
+            'required' => 'el :attribute es requerido',
+            'unique' =>'el codigo existe'
+        ];
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required',
+            'precio'=> 'required',
+            'unidad'=> 'required',
+            
+        ],$messages);
+
+
+ 
+        if ($validator->fails()) {
+            return redirect('productos')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+     
+        $producto = productos::find($id);
+        $producto->nombre  = $request->nombre;
+        $producto->codigo = $request->codigo;
+        $producto->precio = $request->precio;
+        $producto->unidad = $request->unidad;
+        $producto->save();
+
+      return redirect('productos')->with('info','¡Se Actualizo correctamente el producto');
     }
 
     /**
@@ -83,6 +138,7 @@ class ProductosController extends Controller
      */
     public function destroy($id)
     {
-        //
+        productos::destroy($id);
+        return redirect('productos')->with('info','¡Producto eliminado correctamente!');
     }
 }

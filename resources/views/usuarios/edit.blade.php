@@ -45,11 +45,11 @@
                     <div class="form-group col-md-4">
                         <label for="inputState">Rol de usuario</label>
                         <select id="rol" class="form-control" name="rol">
-                            <option value="{{ $user->rol_user($user->id)->name }}" selected>
+                            <option value="{{ $user->rol_user($user->id)->id }}" selected>
                                 {{ $user->rol_user($user->id)->name }}</option>
                             @foreach ($roles as $rol)
 
-                                <option value="{{ $rol->name }}">{{ $rol->name }}</option>
+                                <option value="{{ $rol->id }}">{{ $rol->name }}</option>
                             @endforeach
                         </select>
                     </div>

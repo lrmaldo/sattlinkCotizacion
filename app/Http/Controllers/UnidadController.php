@@ -94,6 +94,7 @@ class UnidadController extends Controller
         $unidad = unidad::find($id);
         $unidad->nombre = $request->nombre;
         $unidad->save();
+        /* Falta poner la validacion del input del modal */
         return redirect('unidad');
     }
 
@@ -105,6 +106,7 @@ class UnidadController extends Controller
      */
     public function destroy($id)
     {
-        //
+        unidad::destroy($id);
+         return redirect('unidad')->with('success','¡Se elimino la unidad de medida correctamente!');
     }
 }

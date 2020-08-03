@@ -47,7 +47,8 @@ class ClientesController extends Controller
             'nombre' => 'required',
             'telefono'=> 'required',
             'porcentaje' => 'required|min:0',
-            'email' => 'email|unique:clientes'
+            'email' => 'email|unique:clientes',
+            'rfc' =>'required'
         ],$messages);
 
 
@@ -122,6 +123,7 @@ class ClientesController extends Controller
         $cliente->descuento = $request->porcentaje;
         $cliente->rfc = $request->rfc;
         $cliente->save();
+        
         return redirect('clientes')->with('success','¡Se a actualizado el cliente correctamente!');
 
     }

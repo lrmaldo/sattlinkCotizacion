@@ -35,7 +35,22 @@ Route::get('/usuarios/destroy/{id}',[
 Route::resource('/clientes','ClientesController');
 
 /*  Rutas de productos */
-Route::resource('/productos','ProductosController');
+/* Route::resource('/productos','ProductosController'); */
+
+
+Route::get('/productos','ProductosController@index');
+
+Route::get('/productos/{id}',[
+    'as' =>'productos.update',
+    'uses'=>'ProductosController@update'
+    ]);
+
+Route::get('/productos/destroy/{id}',[
+    'as' =>'productos.destroy',
+    'uses'=>'ProductosController@destroy'
+    ]);
+
+
 
 /* Rutas de unidad */
 
@@ -52,7 +67,7 @@ Route::get('/unidad/{id}',[
     'uses'=>'UnidadController@update'
     ]);
 
-    Route::get('/unidad/destroy/{id}',[
-        'as' =>'unidad.destroy',
-        'uses'=>'UnidadController@destroy'
-        ]);
+Route::get('/unidad/destroy/{id}',[
+    'as' =>'unidad.destroy',
+    'uses'=>'UnidadController@destroy'
+    ]);

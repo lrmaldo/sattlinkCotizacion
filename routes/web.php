@@ -13,6 +13,7 @@
 
 use Illuminate\Support\Facades\Redirect;
 
+
 Route::get('/', function () {
     return Redirect::to('/login');
 });
@@ -115,3 +116,7 @@ Route::get('/impuesto/{id}',[
         'as' =>'datos.impuesto',
         'uses'=>'DatosfiscalesController@impuesto'
         ]);
+/* Routes de cotizador */
+
+Route::resource('cotizador','CotizacionController');
+

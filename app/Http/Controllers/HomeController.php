@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\cotizaciones;
 class HomeController extends Controller
 {
     /**
@@ -23,6 +23,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $cotizaciones = cotizaciones::all();
+        return view('home',compact('cotizaciones'));
     }
 }

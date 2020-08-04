@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\clientes;
+use DateTime;
 use Illuminate\Cache\RetrievesMultipleKeys;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+/* export excel */
+use Maatwebsite\Excel\Facades\Excel;
 
 class ClientesController extends Controller
 {
@@ -138,5 +141,79 @@ class ClientesController extends Controller
     {
         clientes::destroy($id);
         return redirect('clientes')->with('success','¡Se a eliminado el cliente correctamente!');
+    }
+
+
+
+    public function exportExcel(){
+        $date = new DateTime(); 
+        $forma = (String) date_format($date, 'd-m-Y H:i:s');
+        Excel::create('Clientes-'.$forma, function($excel) {
+           
+            $excel->sheet('Clientes', function($sheet) {
+                
+               // $products = Product::select('id','name','description','serial','quantity')->get();
+               // $products = productos::all();
+                $clientes = clientes::select('id','nombre','telefono','direccion','descuento','rfc','created_at')->get();
+ 
+                $sheet->fromArray($clientes);
+ 
+            });
+        })->export('xlsx');
+    }
+
+    public function importExcel(Request $request){
+
+        if($request->hasFile('file')){
+            Excel::load($request->file('file')->getRealPath(), function ($reader) {
+                foreach ($reader->toArray() as $key => $row) {
+                  
+
+                    if(!array_key_exists('nombre',$row)){
+                        return redirect('clientes')->with('error','No existe columna nombre');
+                    }
+                    if(!array_key_exists('telefono',$row)){
+                        return redirect('clientes')->with('error','No existe columna telefono');
+                    }
+                    if(!array_key_exists('descuento',$row)){
+                        return redirect('clientes')->with('error','No existe columna descuento');
+                    }
+                    if(!array_key_exists('rfc',$row)){
+                        return redirect('clientes')->with('error','No existe columna rfc');
+                    }
+                    
+                    if(!array_key_exists('direccion',$row)){
+                        return redirect('clientes')->with('error','No existe columna direccion');
+                    }
+
+                                        
+                    if(!empty($row)) {
+                   clientes::updateOrCreate([
+                            'rfc'=>$row['rfc'] /*  si el rfc es igual solo se actualiza los datos sino se agrega */
+                        ],
+                        [
+                            'nombre'=>$row['nombre'],
+                            'telefono'=>$row['telefono'],
+                            'direccion'=>$row['direccion'],
+                            'descuento'=>$row['descuento'],
+                            'rfc'=>$row['rfc']
+                        ]);
+                    }
+                   /*  $producto = new productos();
+                    $producto->nombre = $row['nombre'];
+                    $producto->codigo = $row['codigo'];
+                    $producto->unidad = $row['unidad'];
+                    $producto->precio = $row['precio'];
+                    $producto->save(); */
+                  
+                   /*  if(!empty($data)) {
+                        DB::table('productos')->insert($data);
+                    } */
+                }
+              
+            });
+        }
+
+        return redirect('clientes')->with('success','Se a importado los datos correctamente!');
     }
 }

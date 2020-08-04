@@ -34,6 +34,13 @@ Route::get('/usuarios/destroy/{id}',[
 /* Rutas de clientes */
 Route::resource('/clientes','ClientesController');
 
+Route::get('cliente/exportExcel',[
+    'as' =>'clientes.exportExcel',
+    'uses'=>'ClientesController@exportExcel'
+    ]);
+
+Route::post('cliente/importExcel','ClientesController@importExcel');
+
 /*  Rutas de productos */
 /* Route::resource('/productos','ProductosController'); */
 
@@ -58,8 +65,15 @@ Route::get('/productos/destroy/{id}',[
     'uses'=>'ProductosController@destroy'
     ]);
 
+ 
+    Route::get('producto/exportExcel',[
+        'as' =>'productos.exportExcel',
+        'uses'=>'ProductosController@exportExcel'
+        ]);
 
 
+        Route::post('producto/importExcel','ProductosController@importExcel');
+    
 /* Rutas de unidad */
 
 /* Route::resource('/unidad','UnidadController'); */

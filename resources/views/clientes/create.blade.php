@@ -62,7 +62,7 @@
               
               <div class="form-group col-md-4">
                 <label for="inputState">Porcentaje de descuento</label>
-                <input type="number" min="0"  step="0.01" class="form-control" id="porcentaje" name="porcentaje" placeholder="Porcentaje de descuento Ejem. 0.20 o 0.10" >
+                <input type="number" min="0"  step="0.01" class="form-control" id="porcentaje" name="porcentaje" placeholder="Ejem. 20 ó 30 (numero entero)" >
                                         
                 </div>
 

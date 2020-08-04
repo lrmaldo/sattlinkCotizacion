@@ -9,17 +9,34 @@
             <li class="breadcrumb-item active">Productos o Servicios</li>
         </ol>
         <span class="help-block">
-            @if(count($errors)>0)
-            @foreach ($errors->all() as $error)
-            <strong style="color: red">{{ $error }}</strong> <br>
-                
-            @endforeach
-            @endif  
-          </span>
+            @if (count($errors) > 0)
+                @foreach ($errors->all() as $error)
+                    <strong style="color: red">{{ $error }}</strong> <br>
+
+                @endforeach
+            @endif
+        </span>
+
+        <div class="row">
+            <div class="col clearfix">
+                <div class="">
+                    <div class="float-right">
+
+                        <button type="button" data-toggle="modal" data-target="#ModalExcel" data-id_eliminar="1"
+                            class="btn btn-outline-success  btn-xs  ml-auto"><i class="fas fa-file-import"
+                                aria-hidden="true"></i> Importar Excel</button>
+                        <a href="/producto/exportExcel" style="margin-right: 25px"
+                            class="btn btn-outline-primary  btn-xs  ml-auto"><i class="fas fa-file-download "
+                                aria-hidden="true"></i> Descargar Excel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="card-body">
-            <a href="{{ route('productos.create') }}" class="btn btn-success btn-xs"> <i class="fas fa-pen" aria-hidden="true"></i> Agregar Producto o Servicio </a>
-           <div style="margin: 10px"></div>
+            <a href="{{ route('productos.create') }}" class="btn btn-success btn-xs"> <i class="fas fa-pen"
+                    aria-hidden="true"></i> Agregar Producto o Servicio </a>
+            <div style="margin: 10px"></div>
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
@@ -47,30 +64,36 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        @foreach($productos as $item)
+                        @foreach ($productos as $item)
                             <tr>
 
                                 <td>{{ $item->id }}</td>
                                 <td class="nombre">{{ $item->nombre }}</td>
                                 <td class="codigo">{{ $item->codigo }}</td>
                                 <td class="unidad">{{ $item->unidad }}</td>
-                                <td class="precio">{{ $item->precio}}</td>
+                                <td class="precio">{{ $item->precio }}</td>
                                 <td>{{ $item->created_at }}</td>
-                                
-                               
-                                
+
+
+
                                 <td>
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#exampleModal" data-whatever="{{ $item->id }}"
-                                    data-href="{{ route('productos.update', $item->id) }}"><i class="fa fa-edit"
-                                        aria-hidden="true"></i></button>
-                                <button type="button" class="btn btn-danger" data-toggle="modal"
-                                    data-target="#Modal_eliminar" data-id_eliminar="{{ $item->id }}"
-                                    data-href="{{ route('productos.destroy', $item->id) }}"><i class="fa fa-trash"
-                                        aria-hidden="true"></i></button>
-                                    {{-- <a href="{{ route('productos.edit',['id'=>$item->id]) }}" class="btn btn-info btn-xs"> <i class="fa fa-edit" aria-hidden="true"></i> </a> --}}
-                                   {{--  <a href="{{ route('usuarios.destroy',$item->id) }}" class="btn btn-danger btn-xs"> <i class="fa fa-trash" aria-hidden="true" onclick="return confirm('Deseas eliminarlo')"></i> </a> --}}
-                                    
+                                        data-target="#exampleModal" data-whatever="{{ $item->id }}"
+                                        data-href="{{ route('productos.update', $item->id) }}"><i class="fa fa-edit"
+                                            aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-danger" data-toggle="modal"
+                                        data-target="#Modal_eliminar" data-id_eliminar="{{ $item->id }}"
+                                        data-href="{{ route('productos.destroy', $item->id) }}"><i class="fa fa-trash"
+                                            aria-hidden="true"></i></button>
+                                    {{-- <a
+                                        href="{{ route('productos.edit', ['id' => $item->id]) }}"
+                                        class="btn btn-info btn-xs"> <i class="fa fa-edit" aria-hidden="true"></i> </a>
+                                    --}}
+                                    {{-- <a href="{{ route('usuarios.destroy', $item->id) }}"
+                                        class="btn btn-danger btn-xs"> <i class="fa fa-trash" aria-hidden="true"
+                                            onclick="return confirm('Deseas eliminarlo')"></i> </a>
+                                    --}}
+
                                 </td>
                             </tr>
                         @endforeach
@@ -97,7 +120,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="formedit" role="form" method="get" action="{{ route('productos.update', '') }}">
-                  
+
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="form-group">
                             <label for="recipient-name" class="col-form-label">Nombre:</label>
@@ -112,14 +135,14 @@
                             <select id="unidad" name="unidad" class="form-control">
                                 <option id='select_unidad' value="" selected></option>
                                 @foreach ($unidades as $item)
-                              <option value="{{$item->nombre}}">{{$item->nombre}}</option>
-                                    
+                                    <option value="{{ $item->nombre }}">{{ $item->nombre }}</option>
+
                                 @endforeach
-                              </select>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="recipient-name" class="col-form-label">Precio:</label>
-                            <input id="precio" name="precio" type="number" min="0" step="0.01" class="form-control" >
+                            <input id="precio" name="precio" type="number" min="0" step="0.01" class="form-control">
                         </div>
 
 
@@ -153,68 +176,122 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     <form id="formdestroy" class="form-horizontal" role="form" method="get"
                         action="{{ route('productos.destroy', '') }}">
-                        {{-- <input type="hidden" name="_method" value="DELETE"> --}}
+                        {{-- <input type="hidden" name="_method" value="DELETE">
+                        --}}
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <input class="btn btn-danger btn-xs" type="submit" value="Eliminar" />
-
+                        
                     </form>
 
 
                 </div>
             </div>
+        </div>
+    </div>
+
+    {{-- modal de importacion de excel --}}
+    <div class="modal fade" id="ModalExcel" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="formfile" class="form-horizontal" role="form" method="POST"
+                    action="{{ URL::to('producto/importExcel') }}" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        Sube un archivo en formato Excel de acuerdo a la plantilla
+                        {{-- <input type="hidden" name="_method" value="DELETE">
+                        --}}
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <div class="form-group">
+                           
+                            
+                            <input type="file" class="form-control" name="file" 
+                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <input class="btn btn-primary btn-xs" type="submit" value="Subir" />
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
 
+    {{-- script del modal para obtener los datos --}}
 
-            {{-- script del modal para obtener los datos --}}
+    <script>
+        $('#exampleModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var id = button.data('whatever')
 
-            <script>
-                $('#exampleModal').on('show.bs.modal', function(event) {
-                    var button = $(event.relatedTarget) // Button that triggered the modal
-                    var id = button.data('whatever')
+            var parentTr = button.closest('tr');
+            var recipient = parentTr.find('.nombre').text();
+            var codigo = parentTr.find('.codigo').text();
+            var unidad = parentTr.find('.unidad').text();
+            var precio = parentTr.find('.precio').text();
+            console.log(recipient); // Extract info from data-* attributes
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+            modal.find('.modal-title').text('Actualizar ' + recipient) /* titulo */
+            modal.find('#nombre').val(recipient); /* input del modal */
+            modal.find('#codigo').val(codigo); /* input del modal */
+            modal.find('#select_unidad').val(unidad); /* input del DE LA UNIDAD SELECCIONADA */
 
-                    var parentTr = button.closest('tr');
-                    var recipient = parentTr.find('.nombre').text();
-                    var codigo = parentTr.find('.codigo').text();
-                    var unidad = parentTr.find('.unidad').text();
-                    var precio = parentTr.find('.precio').text();
-                    console.log(recipient); // Extract info from data-* attributes
-                    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-                    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-                    var modal = $(this)
-                    modal.find('.modal-title').text('Actualizar ' + recipient) /* titulo */
-                    modal.find('#nombre').val(recipient); /* input del modal */
-                    modal.find('#codigo').val(codigo); /* input del modal */
-                    modal.find('#select_unidad').val(unidad); /* input del DE LA UNIDAD SELECCIONADA */
-                   
-                    document.getElementById('select_unidad').innerHTML = unidad; /* ENVIA EL VALOR ENTRE LOS OPTIONS */
-                   
-                    modal.find('#precio').val(precio); 
-                    modal.find('#formedit').attr('action', function(i, old) {
-                        /*URL del modal */
-                        return old + '/' + id;
-                    });
-                });
+            document.getElementById('select_unidad').innerHTML = unidad; /* ENVIA EL VALOR ENTRE LOS OPTIONS */
 
-
-                /* script para eliminar unidad */
-
-                $('#Modal_eliminar').on('show.bs.modal', function(event) {
-                    var button = $(event.relatedTarget) // Button that triggered the modal
-                    var id = button.data('id_eliminar')
+            modal.find('#precio').val(precio);
+            modal.find('#formedit').attr('action', function(i, old) {
+                /*URL del modal */
+                return old + '/' + id;
+            });
+        });
 
 
-                    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-                    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-                    var modal = $(this)
+        /* script para eliminar unidad */
 
-                    modal.find('#formdestroy').attr('action', function(i, old) {
-                        /*URL del modal */
-                        return old + '/' + id;
-                    });
-                });
+        $('#Modal_eliminar').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var id = button.data('id_eliminar')
 
-            </script>
+
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+
+            modal.find('#formdestroy').attr('action', function(i, old) {
+                /*URL del modal */
+                return old + '/' + id;
+            });
+        });
+
+
+
+        $('#ModalExcel').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var id = button.data('id_eliminar')
+
+
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+
+            modal.find('#formdestroy').attr('action', function(i, old) {
+                /*URL del modal */
+                return old + '/';
+            });
+        });
+
+    </script>
 
 
 

@@ -120,3 +120,8 @@ Route::get('/impuesto/{id}',[
 
 Route::resource('cotizador','CotizacionController');
 
+Route::post('cotizador/add',[
+    'as'=>'cotizador.add',
+    'uses'=>'CotizacionController@add'
+]);
+

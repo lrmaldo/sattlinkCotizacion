@@ -8,7 +8,7 @@
         <li class="breadcrumb-item active">Dashboard</li>
     </ol>
     
-
+    
     <div class="card-body">
         <a href="{{ route('cotizador.create') }}" class="btn btn-success btn-xs"> <i class="fas fa-file"
             aria-hidden="true"></i> Crear nueva cotización </a>

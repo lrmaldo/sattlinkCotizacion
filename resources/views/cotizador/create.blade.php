@@ -3,6 +3,7 @@
     {{-- @foreach ($folio as $item)
         {{ $item->folio }}
     @endforeach --}}
+   
     <div class="container-fluid">
         <h1 class="mt-4">Nueva Cotización</h1>
         <ol class="breadcrumb mb-4">
@@ -23,8 +24,9 @@
                     <small>{{$item->nombre}}/ Direccion: {{$item->direccion}}/ R.F.C: {{$item->rfc}}</small><br>
                     </label>
                   </div>
+                  @endforeach 
                 </div>
-                @endforeach 
+              
                  
               
                   
@@ -66,56 +68,105 @@
                               
                                 
     
-                                {{-- <div class="col-auto">
-                                    <button onclick="getCliete()" class="btn btn-primary mb-2">Buscar</button>
-                                </div> --}}
-                     
-                    </div>
+                                </div>
                     <div class="form-group col-md-6">
-                        <label for="inputEmail4">Nombre cliente:</label>
-                        <input type="text" class="form-control" name="nombre_cliente" id="nombre_cliente" value=""
-                            placeholder="Nombre del vendedor">
+
+
+                        {{-- <label for="inputEmail4">Nombre cliente:</label>
+                        <input type="text" readonly class="form-control-plaintext" name="nombre_cliente" id="nombre_cliente" value=""
+                            placeholder="" disabled> --}}
+                            <div class="table-responsive">
+                                <table cellspacing="0" style="width: 100%; text-align: left; font-size: 11pt;">
+                                    <tr>
+                                       
+                                        <td style="width:15%; ">Nombre:</td>
+                                        <td  id="nombre_cliente" style="width:50%"> </td>
+                                        <td style="width:15%;text-align:right"></td>
+                                        <td style="width:20%"></td>
+                                    </tr>
+                                    <tr>
+                                        
+                                        <td style="width:15%; ">Dirección:</td>
+                                        <td id="direccion" style="width:50%"></td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        
+                                        <td style="width:15%; ">Teléfono:</td>
+                                        <td id="telefono" style="width:50%"></td>
+                                    </tr>
+                                    <tr>
+                                        
+                                        <td style="width:15%; ">R.F.C.:</td>
+                                        <td id="rfc" style="width:50%"></td>
+                                    </tr>
+                                    <tr>
+                                        
+                                        <td style="width:15%; ">Descuento:</td>
+                                        <td id="descuentoCliente" style="width:50%"></td>
+                                    </tr>
+                               
+                                </table>
+                            </div>
+
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                      <label for="inputEmail4">Teléfono</label>
-                      <input type="text" class="form-control" id="telefono" name="telefono" value="" placeholder="Escribe el teléfono del cliente" >
-                    </div>
-                    <div class="form-group col-md-6">
-                      <label for="inputPassword4">RFC</label>
-                      <input type="text" class="form-control" id="rfc" name="rfc" value="" placeholder="RFC del cliente" >
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="inputAddress">Dirección</label>
-                    <input type="text" class="form-control" id="direccion" name="direccion" value="" placeholder="Escribe la dirección del cliente" >
-                  </div>
+              
 
             </form>
-            <div class="float-right">
+            <div class="">
+                <div class="form-group row float-right">
+                    <div class="col-xs-2 mx-sm-3">
+                      <label for="ex1">Buscar producto</label>
+                     
+                      <select   class="js-example-responsive form-control" style="width: 100%; height: 55%"  name='id_producto' id='id_producto'>
+                        <option value=''>Seleccionar un producto</option>
+                        @foreach ($productos as $item)
+                            <option value='{{ $item->id }}'>{{ $item->nombre }}</option>
 
-                <button type="button" class="btn btn-outline-primary" onclick="add()">Agregar productos</button>
+                        @endforeach
+
+                    </select>
+                    </div>
+                    <div class="col-xs-3 mx-sm-3 ">
+                      <label for="ex2">Cantidad</label>
+                      <input class="form-control  "  style="width: 70%" id="cantidad_producto" type="text" name="cantidad_producto">
+                    </div>
+                    <div class="col-xs-4">
+                      <label for="ex3"></label>
+                     {{--  <input class="form-control" id="ex3" type="text"> --}}
+                      <button type="button" class="btn btn-outline-primary  form-control mx-sm-2" onclick="add()">Agregar productos</button>
+                    </div>
+                  </div>
+                      
+                       
+                      
+               
+                
             </div>
             
                      <div class="table-responsive">
-                <table class="table table-bordered"  width="100%" cellspacing="0">
+                <table class="table "  style="width: 100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>U.M.</th>
-                            <th>CANT.</th>
-                            <th>DESCRIPCIÓN</th>
-                            <th class="">PRECIO UNIT.</th>
-                            <th class="">IMPORTE</th>
+                            <th style="width: 5%">U.M.</th>
+                            <th style="width: 5%">CANT.</th>
+                            <th style="width: 45%">DESCRIPCIÓN</th>
+                            <th style="width: 15%">PRECIO UNIT.</th>
+                            <th style="width: 15%">IMPORTE</th>
                             
-                            <th>Acciones</th>
+                            <th style="width: 15%">Acciones</th>
                         </tr>
                     </thead>
                  
+                  {{--   @if($cout)
+                   
+                    @endif --}}
                     <tbody id="resultado">
-                       
+                    
                     </tbody>
+
                 </table>
             </div>
                    
@@ -141,6 +192,7 @@
        var select_val = selected_element.val();
        console.log(parseInt(select_val))
        var id_num = parseInt(select_val);
+       
        $matriz = clientes.filter(x => x.id === id_num);
          console.log($matriz[0].nombre) 
          var nombre_cliente = $matriz[0].nombre
@@ -148,19 +200,48 @@
          var email_cliente = $matriz[0].email;
          var rfc_cliente =$matriz[0].rfc;
          var telefono = $matriz[0].telefono;
-         var descuento_cliente =$matriz[0].descuento;
-         document.getElementById('nombre_cliente').value= nombre_cliente;
-         document.getElementById('direccion').value= direccion_cliente;
-         document.getElementById('rfc').value= rfc_cliente;
-         document.getElementById('telefono').value= telefono;
+          descuento_cliente =$matriz[0].descuento;
+         document.getElementById('nombre_cliente').innerHTML= nombre_cliente;
+         document.getElementById('direccion').innerHTML= direccion_cliente;
+         document.getElementById('rfc').innerHTML= rfc_cliente;
+         document.getElementById('telefono').innerHTML= telefono;
+         document.getElementById('descuentoCliente').innerHTML= descuento_cliente+"%";
       
 });
+/* select2 de productos */
+jQuery(document).ready(function($) {
+            $(document).ready(function() {
+                $(".js-example-responsive").select2({
+                    width: 'resolve',
+                    heigth: "resolve"// need to override the changed default
+                });
+            });
+        });
+        var id_producto = $('#id_producto').select2()
+        .on("select2:select", function (e) {
+       var selected_element = $(e.currentTarget);
+       id_producto = selected_element.val();
+       console.log(parseInt(id_producto))
+       
+      
+});
+
 
       /* funcion de agregar productos */
       function add(){
         var token = '{{csrf_token()}}';// ó $("#token").val() si lo tienes en una etiqueta html.
+        //var id_producto;
+        var cantidad = $("#cantidad_producto").val();
+       
+       var  quitarp = document.getElementById('descuentoCliente').innerHTML ;
+        var descuentoC = quitarp.replace('%','');
+        console.log("sd "+descuentoC);
+
+
         console.log(token);
-        var data={nombre:"test",_token:token};
+        console.log(id_producto)
+        console.log(cantidad)
+        var data={id_producto:id_producto,cantidad:cantidad,_token:token,descuento_cliente:descuentoC};
         $.ajax({
 
         type:'post',
@@ -172,6 +253,8 @@
         }
         })
       }
+
+
 
       
     </script>

@@ -154,7 +154,7 @@ class ClientesController extends Controller
                 
                // $products = Product::select('id','name','description','serial','quantity')->get();
                // $products = productos::all();
-                $clientes = clientes::select('id','nombre','telefono','direccion','descuento','rfc','created_at')->get();
+                $clientes = clientes::select('id','nombre','telefono','direccion','descuento','email' ,'rfc','created_at')->get();
  
                 $sheet->fromArray($clientes);
  
@@ -188,14 +188,16 @@ class ClientesController extends Controller
 
                                         
                     if(!empty($row)) {
-                   clientes::updateOrCreate([
-                            'rfc'=>$row['rfc'] /*  si el rfc es igual solo se actualiza los datos sino se agrega */
+                   clientes::updateOrCreate(
+                       [
+                            'rfc'=>$row['rfc'] //  si el rfc es igual solo se actualiza los datos sino se agrega 
                         ],
                         [
                             'nombre'=>$row['nombre'],
                             'telefono'=>$row['telefono'],
                             'direccion'=>$row['direccion'],
                             'descuento'=>$row['descuento'],
+                            'email'=>$row['email'],
                             'rfc'=>$row['rfc']
                         ]);
                     }

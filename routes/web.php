@@ -125,3 +125,12 @@ Route::post('cotizador/add',[
     'uses'=>'CotizacionController@add'
 ]);
 
+Route::post('cotizador/add_cliente',[
+    'as'=>'cotizador.add',
+    'uses'=>'CotizacionController@add_cliente'
+]);
+
+Route::post('/cotizador/destroy_tmp',[
+    'as' =>'cotizador.destroy_tmp',
+    'uses'=>'CotizacionController@destroy_tmp'
+    ]);

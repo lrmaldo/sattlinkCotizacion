@@ -38,13 +38,16 @@ class CotizacionController extends Controller
     {
         //$num_cotizacion = cotizaciones::all()->last();
         $folio = DB::select("SELECT CASE WHEN COUNT(*) > 0 THEN CONCAT('FOLIO-',LPAD(SUBSTR(folio,7,11)+1,4,'0'), '/', YEAR(NOW())) ELSE CONCAT('FOLIO-00001', '/', YEAR(NOW())) END AS folio FROM folios WHERE year(created_at) = YEAR(NOW()) ORDER BY folio DESC LIMIT 1");
+        
         $clientes = clientes::all();
         $datosfiscales = datosfiscales::all();
         $productos = productos::all();
+        $tmp = tmp_detalle_cotizacion::all();
         return view('cotizador.create',compact('folio',
         'clientes',
         'datosfiscales',
-        'productos'));
+        'productos',
+        'tmp'));
     }
 
     public function add(Request $request){
@@ -77,13 +80,15 @@ class CotizacionController extends Controller
             <td style='text-align: center'>$".number_format($item->tmp_precio,2)."</td>
             <td style='text-align: center'>$".number_format(($item->tmp_precio*$item->tmp_cantidad),2)."</td>
             
-            <td><a class='btn btn-info '> <i class='fa fa-edit' aria-hidden='true'></i> </a> 
-            <a class='btn btn-info ' > <i class='fa fa-edit' aria-hidden='true'></i> </a></td>                 
+            <td>
+            <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
+        <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$item->id' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+            </td>                 
         </tr>";
         }
         $datos=$datos."<tr>
         <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
-        <td style='text-align: center'><span >$".number_format($sumador_total,2)."</span></td>
+        <td style='text-align: center'><span >$".number_format(($sumador_total/($iva+1)),2)."</span></td>
        
         </tr>";
       
@@ -109,6 +114,70 @@ class CotizacionController extends Controller
       //return  var_dump($request->all());
         return $datos;
     }
+
+
+
+
+
+    public function add_cliente(Request $request){
+        $impuesto = impuestos::where('id',1)->first();
+        $iva = ($impuesto->cantidad)/100;//impuesto del 16 %
+        $descuento_cliente = ((int)$request->descuento_cliente)/100;
+        session_start();
+        $session_id= session_id();
+    
+     
+   
+    $datos ="";
+
+    $fortmp = tmp_detalle_cotizacion::all();
+    $sumador_total=0;
+    foreach ($fortmp as $item){
+        $prod = productos::where('id',$item->tmp_id_producto)->first();
+        $preciototal= $item->tmp_precio*$item->tmp_cantidad;
+        $sumador_total+=$preciototal;//sumador de totales
+
+        $datos= $datos."<tr>
+        <td style='text-align: center'>".$prod->unidad."</td>
+        <td style='text-align: center'>".$item->tmp_cantidad."</td>
+        <td>".$prod->nombre."</td>
+        <td style='text-align: center'>$".number_format($item->tmp_precio,2)."</td>
+        <td style='text-align: center'>$".number_format(($item->tmp_precio*$item->tmp_cantidad),2)."</td>
+        
+        <td>
+        <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
+        <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$item->id' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+        </td>                 
+    </tr>";
+    }
+    $datos=$datos."<tr>
+    <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
+    <td style='text-align: center'><span >$".number_format(($sumador_total/($iva+1)),2)."</span></td>
+   
+    </tr>";
+  
+   
+    $totalcondescuento = $sumador_total-($sumador_total*$descuento_cliente);
+    $descuento= ($sumador_total*$descuento_cliente); 
+   $datos=$datos."<tr>
+    <td colspan=4><span class='float-right'>Descuento %</span></td>
+    <td style='text-align: center'><span >$".$descuento."</span></td>
+    </tr>";
+    $total_con_iva = $sumador_total - ($sumador_total/($iva+1));//calcula el iva del total neto mes el
+    $datos=$datos."<tr>
+    <td colspan=4><span class='float-right'>I.V.A.</span></td>
+    <td style='text-align: center'><span >$".number_format($total_con_iva,2)."</span></td>
+    
+    </tr>";
+    $datos=$datos."<tr>
+    <td colspan=4><span class='float-right'>TOTAL </span></td>
+    <td style='text-align: center'><span >$".number_format($totalcondescuento,2)."</span></td>
+    
+    </tr>";
+   
+  //return  var_dump($request->all());
+    return $datos;
+}
 
     /**
      * Store a newly created resource in storage.
@@ -153,6 +222,76 @@ class CotizacionController extends Controller
     public function update(Request $request, $id)
     {
         //
+    }
+
+/**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy_tmp(Request $request)
+    {
+        tmp_detalle_cotizacion::destroy($request->id);
+        $impuesto = impuestos::where('id',1)->first();
+        $iva = ($impuesto->cantidad)/100;//impuesto del 16 %
+        $descuento_cliente = ((int)$request->descuento_cliente)/100;
+        session_start();
+        $session_id= session_id();
+    
+     
+   
+    $datos ="";
+
+    $fortmp = tmp_detalle_cotizacion::all();
+    $sumador_total=0;
+    foreach ($fortmp as $item){
+        $prod = productos::where('id',$item->tmp_id_producto)->first();
+        $preciototal= $item->tmp_precio*$item->tmp_cantidad;
+        $sumador_total+=$preciototal;//sumador de totales
+
+        $datos= $datos."<tr>
+        <td style='text-align: center'>".$prod->unidad."</td>
+        <td style='text-align: center'>".$item->tmp_cantidad."</td>
+        <td>".$prod->nombre."</td>
+        <td style='text-align: center'>$".number_format($item->tmp_precio,2)."</td>
+        <td style='text-align: center'>$".number_format(($item->tmp_precio*$item->tmp_cantidad),2)."</td>
+        
+        <td>
+        <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
+        <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$item->id' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+        </td>                 
+    </tr>";
+    }
+    $datos=$datos."<tr>
+    <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
+    <td style='text-align: center'><span >$".number_format(($sumador_total/($iva+1)),2)."</span></td>
+   
+    </tr>";
+  
+   
+    $totalcondescuento = $sumador_total-($sumador_total*$descuento_cliente);
+    $descuento= ($sumador_total*$descuento_cliente); 
+   $datos=$datos."<tr>
+    <td colspan=4><span class='float-right'>Descuento %</span></td>
+    <td style='text-align: center'><span >$".$descuento."</span></td>
+    </tr>";
+    $total_con_iva = $sumador_total - ($sumador_total/($iva+1));//calcula el iva del total neto mes el
+    $datos=$datos."<tr>
+    <td colspan=4><span class='float-right'>I.V.A.</span></td>
+    <td style='text-align: center'><span >$".number_format($total_con_iva,2)."</span></td>
+    
+    </tr>";
+    $datos=$datos."<tr>
+    <td colspan=4><span class='float-right'>TOTAL </span></td>
+    <td style='text-align: center'><span >$".number_format($totalcondescuento,2)."</span></td>
+    
+    </tr>";
+   
+  //return  var_dump($request->all());
+    return $datos;
+        
+        
     }
 
     /**

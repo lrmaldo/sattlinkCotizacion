@@ -39,15 +39,15 @@
                     <div class="form-group col-md-6">
                         <label for="inputEmail4">Vendedor:</label>
                         <input type="text" class="form-control" name="vendedor" value="{{ Auth::user()->name }}"
-                            placeholder="Nombre del vendedor">
+                            placeholder="Nombre del vendedor" >
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-2">
                         <label for="inputEmail4">Folio</label>
-                        @foreach ($folio as $item)
+                       
 
-                            <input type="text" class="form-control" name="folio" value="{{ $item->folio }}"
-                                placeholder="folio">
-                        @endforeach
+                            <input type="text" class="form-control" name="folio" value="{{ $folio }}"
+                                placeholder="folio" disabled>
+                       
                     </div>
 
 

@@ -45,8 +45,9 @@ class CotizacionController extends Controller
         $folio = "";
         foreach ($consuta_folio as $cons) {
             $folio = str_pad($cons->folio + 1, 4, "0", STR_PAD_LEFT) . "/" . date("Y");
-        }
-        // return   $folio;  
+        } 
+
+          
         $clientes = clientes::all();
         $datosfiscales = datosfiscales::all();
         $productos = productos::all();

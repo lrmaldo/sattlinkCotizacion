@@ -18,7 +18,7 @@ class CotizacionesMigration extends Migration
             $table->increments('id');
             $table->string('folio');
             $table->string('forma');
-            $table->string('comentario');
+            $table->text('comentario');
             $table->string('estatus')->comment('activar o desactivar producto');
             $table->float('descuento',10,2);
             $table->float('total',10,2);

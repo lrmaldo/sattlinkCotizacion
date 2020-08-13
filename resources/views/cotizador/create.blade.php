@@ -181,8 +181,14 @@
             </div>
 
 
-
-
+            <div class="grid-width-100">
+                <h2>Observaciones:</h2>
+                
+				<div id="editor">
+					<h1>titulo</h1>
+					<p>ejemplo.</p>
+				</div>
+			</div>
 
         </div>
     </div>
@@ -218,6 +224,9 @@
     </div>
 
     <script>
+        /* iniciar el ckeditor.js */
+        initSample();
+        /* fin del ckeditor */
         jQuery(document).ready(function($) {
             $(document).ready(function() {
                 $('.mi-selector').select2();

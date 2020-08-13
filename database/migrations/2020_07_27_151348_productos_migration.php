@@ -17,7 +17,7 @@ class ProductosMigration extends Migration
         Schema::create('productos', function (Blueprint $table) {
             $table->engine ='InnoDB';
             $table->increments('id');
-            $table->string('nombre');
+            $table->text('nombre');
             $table->string('codigo')->nullable();
             $table->string('unidad')->comment('tipo de unidad');
             $table->string('estatus')->default('activo')->comment('activar o desactivar producto');

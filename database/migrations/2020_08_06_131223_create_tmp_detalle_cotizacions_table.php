@@ -15,7 +15,7 @@ class CreateTmpDetalleCotizacionsTable extends Migration
     {
         Schema::create('tmp_detalle_cotizacion', function (Blueprint $table) {
             $table->engine='InnoDB';
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->integer('tmp_cantidad');
             $table->float('tmp_precio',10,2);
             $table->integer('tmp_id_producto');

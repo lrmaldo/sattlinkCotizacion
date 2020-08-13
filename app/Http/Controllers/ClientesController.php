@@ -188,10 +188,12 @@ class ClientesController extends Controller
 
                                         
                     if(!empty($row)) {
-                   clientes::updateOrCreate(
-                       [
+                          //$cliente = clientes::where('rfc',$row['rfc'])->first();
+
+                  /*  clientes::updateOrCreate(
+                        [
                             'rfc'=>$row['rfc'] //  si el rfc es igual solo se actualiza los datos sino se agrega 
-                        ],
+                        ], 
                         [
                             'nombre'=>$row['nombre'],
                             'telefono'=>$row['telefono'],
@@ -199,14 +201,23 @@ class ClientesController extends Controller
                             'descuento'=>$row['descuento'],
                             'email'=>$row['email'],
                             'rfc'=>$row['rfc']
-                        ]);
+                        ]); */
+
+                        $cliente = new clientes();
+                        $cliente->nombre = $row['nombre'];
+                        $cliente->email = $row['email'];
+                        $cliente->direccion = $row['direccion'];
+                        $cliente->telefono = $row['telefono'];
+                        $cliente->descuento = $row['descuento'];
+                        $cliente->rfc = $row['rfc'];
+                        $cliente->save();
                     }
                    /*  $producto = new productos();
                     $producto->nombre = $row['nombre'];
                     $producto->codigo = $row['codigo'];
                     $producto->unidad = $row['unidad'];
                     $producto->precio = $row['precio'];
-                    $producto->save(); */
+                    $producto->save();
                   
                    /*  if(!empty($data)) {
                         DB::table('productos')->insert($data);

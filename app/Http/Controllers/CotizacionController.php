@@ -45,9 +45,9 @@ class CotizacionController extends Controller
         $folio = "";
         foreach ($consuta_folio as $cons) {
             $folio = str_pad($cons->folio + 1, 4, "0", STR_PAD_LEFT) . "/" . date("Y");
-        } 
+        }
 
-          
+
         $clientes = clientes::all();
         $datosfiscales = datosfiscales::all();
         $productos = productos::all();
@@ -70,28 +70,46 @@ class CotizacionController extends Controller
         $session_id = session_id();
 
         $producto = productos::where("id", $request->id_producto)->first();
-        $tmp = new tmp_detalle_cotizacion();
-        $tmp->tmp_cantidad = $request->cantidad;
-        $tmp->tmp_precio = $producto->precio;
-        $tmp->tmp_id_producto = $producto->id;
-        $tmp->session_id = $session_id;
-        $tmp->save();
+        
+        $exite_prod = tmp_detalle_cotizacion::where('tmp_id_producto',$request->id_producto)->first();
+        if($exite_prod){
+             $cantidadpre = tmp_detalle_cotizacion::find($exite_prod->id);
+             $cantidadpre->tmp_cantidad = $request->cantidad;
+             $cantidadpre->save();
+                                    
+                                    
+        }else{
+            
+            $tmp = new tmp_detalle_cotizacion();
+            $tmp->tmp_cantidad = $request->cantidad;
+            $tmp->tmp_precio = $producto->precio;
+            $tmp->tmp_id_producto = $producto->id;
+            $tmp->session_id = $session_id;
+            $tmp->save();
+        }
 
-           //actualizar precios en la tabla temporal de detalle cotizaciones 
-           $actualizacion = tmp_detalle_cotizacion::all();
-       
-           foreach($actualizacion as $update){
-               $producto = productos::where('id',$update->tmp_id_producto)->first();
-               tmp_detalle_cotizacion::where('tmp_id_producto',$producto->id)
-                                       ->update(['tmp_precio' =>$producto->precio]);
-           }
-           //fin de actualizacion de precios
+
+        //actualizar precios en la tabla temporal de detalle cotizaciones 
+        $actualizacion = tmp_detalle_cotizacion::all();
+
+        foreach ($actualizacion as $update) {
+            $producto = productos::where('id', $update->tmp_id_producto)->first();
+            tmp_detalle_cotizacion::where('tmp_id_producto', $producto->id)
+                ->update(['tmp_precio' => $producto->precio,]);
+        }
+        //fin de actualizacion de precios
+        
+        //actualizar cantidad 
+       /*  $updat_catidad =tmp_detalle_cotizacion::where('tmp_id_producto',$request->id_producto)
+        ->update(['tmp_cantidad'])  */
+
         $datos = "";
 
         $fortmp = tmp_detalle_cotizacion::all();
         $sumador_total = 0;
         foreach ($fortmp as $item) {
             $prod = productos::where('id', $item->tmp_id_producto)->first();
+           
             $preciototal = $item->tmp_precio * $item->tmp_cantidad;
             $sumador_total += $preciototal; //sumador de totales
 
@@ -113,6 +131,12 @@ class CotizacionController extends Controller
         <td style='text-align: center'><span >$" . number_format(($sumador_total / ($iva + 1)), 2) . "</span></td>
        
         </tr>";
+        $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto
+        $datos = $datos . "<tr>
+        <td colspan=4><span class='float-right'>I.V.A.</span></td>
+        <td style='text-align: center'><span >$" . number_format($total_con_iva, 2) . "</span></td>
+        
+        </tr>";
 
 
         $totalcondescuento = $sumador_total - ($sumador_total * $descuento_cliente);
@@ -121,12 +145,7 @@ class CotizacionController extends Controller
         <td colspan=4><span class='float-right'>Descuento %</span></td>
         <td style='text-align: center'><span >$" . $descuento . "</span></td>
         </tr>";
-        $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
-        $datos = $datos . "<tr>
-        <td colspan=4><span class='float-right'>I.V.A.</span></td>
-        <td style='text-align: center'><span >$" . number_format($total_con_iva, 2) . "</span></td>
-        
-        </tr>";
+
         $datos = $datos . "<tr>
         <td colspan=4><span class='float-right'>TOTAL </span></td>
         <td style='text-align: center'><span >$" . number_format($totalcondescuento, 2) . "</span></td>
@@ -152,22 +171,22 @@ class CotizacionController extends Controller
 
         //actualizar precios en la tabla temporal de detalle cotizaciones 
         $actualizacion = tmp_detalle_cotizacion::all();
-       
-        foreach($actualizacion as $update){
-            $producto = productos::where('id',$update->tmp_id_producto)->first();
-            tmp_detalle_cotizacion::where('tmp_id_producto',$producto->id)
-                                    ->update(['tmp_precio' =>$producto->precio]);
+
+        foreach ($actualizacion as $update) {
+            $producto = productos::where('id', $update->tmp_id_producto)->first();
+            tmp_detalle_cotizacion::where('tmp_id_producto', $producto->id)
+                ->update(['tmp_precio' => $producto->precio]);
         }
         //fin de actualizacion de precios
 
         $datos = "";
 
-      
+
 
         $fortmp = tmp_detalle_cotizacion::all();
         $sumador_total = 0;
         foreach ($fortmp as $item) {
-            
+
             $prod = productos::where('id', $item->tmp_id_producto)->first();
 
             $preciototal = $item->tmp_precio * $item->tmp_cantidad;
@@ -191,7 +210,12 @@ class CotizacionController extends Controller
     <td style='text-align: center'><span >$" . number_format(($sumador_total / ($iva + 1)), 2) . "</span></td>
    
     </tr>";
+        $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
+        $datos = $datos . "<tr>
+<td colspan=4><span class='float-right'>I.V.A.</span></td>
+<td style='text-align: center'><span >$" . number_format($total_con_iva, 2) . "</span></td>
 
+</tr>";
 
         $totalcondescuento = $sumador_total - ($sumador_total * $descuento_cliente);
         $descuento = ($sumador_total * $descuento_cliente);
@@ -199,12 +223,7 @@ class CotizacionController extends Controller
     <td colspan=4><span class='float-right'>Descuento %</span></td>
     <td style='text-align: center'><span >$" . $descuento . "</span></td>
     </tr>";
-        $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
-        $datos = $datos . "<tr>
-    <td colspan=4><span class='float-right'>I.V.A.</span></td>
-    <td style='text-align: center'><span >$" . number_format($total_con_iva, 2) . "</span></td>
-    
-    </tr>";
+
         $datos = $datos . "<tr>
     <td colspan=4><span class='float-right'>TOTAL </span></td>
     <td style='text-align: center'><span >$" . number_format($totalcondescuento, 2) . "</span></td>

@@ -44,8 +44,14 @@ class CotizacionController extends Controller
             ->get();
         $folio = "";
         foreach ($consuta_folio as $cons) {
+          
             $folio = str_pad($cons->folio + 1, 4, "0", STR_PAD_LEFT) . "/" . date("Y");
+            
         }
+        if(count($consuta_folio)==0){
+            $folio = str_pad(1,4,"0",STR_PAD_LEFT)."/".date("Y");
+        }
+        
 
 
         $clientes = clientes::all();

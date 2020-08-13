@@ -21,8 +21,8 @@
                     @foreach ($datosfiscales as $item)
 
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="id_datosfiscales" id="id_datosfiscales"
-                                value="{{ $item->id }}" checked>
+                        <input class="form-check-input" type="radio" name="id_datosfiscales" id="id_datosfiscales-{{$item->id}}"
+                                value="{{ $item->id }}">
                             <label class="form-check-label" for="exampleRadios1">
                                 <small>{{ $item->nombre }}/ Direccion: {{ $item->direccion }}/ R.F.C:
                                     {{ $item->rfc }}</small><br>
@@ -36,28 +36,20 @@
 
                 <div class="row">
 
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label for="inputEmail4">Vendedor:</label>
-                        <input type="text" class="form-control" name="vendedor" value="{{ Auth::user()->name }}"
+                        <input type="text" class="form-control" name="vendedor" id="vendedor" value="{{ Auth::user()->name }}"
                             placeholder="Nombre del vendedor" >
                     </div>
                     <div class="form-group col-md-2">
                         <label for="inputEmail4">Folio</label>
                        
 
-                            <input type="text" class="form-control" name="folio" value="{{ $folio }}"
+                            <input type="text" class="form-control"  id='folio' name="folio" value="{{ $folio }}"
                                 placeholder="folio" disabled>
                        
                     </div>
-
-
-
-                </div>
-                <label>
-                    <h4>Detalle del cliente:</h4>
-                </label>
-                <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
 
 
 
@@ -75,12 +67,18 @@
 
 
                     </div>
-                    <div class="form-group col-md-6">
 
 
-                        {{-- <label for="inputEmail4">Nombre cliente:</label>
-                        <input type="text" readonly class="form-control-plaintext" name="nombre_cliente" id="nombre_cliente"
-                            value="" placeholder="" disabled> --}}
+                </div>
+                <label>
+                    <h4>Detalle del cliente:</h4>
+                </label>
+                <div class="row">
+                   
+                    <div class="form-group col-md-4">
+
+
+                   
                         <div class="table-responsive">
                             <table cellspacing="0" style="width: 100%; text-align: left; font-size: 11pt;">
                                 <tr>
@@ -141,12 +139,20 @@
                         <input class="form-control  " style="width: 70%" id="cantidad_producto" type="text"
                             name="cantidad_producto">
                     </div>
+                    <div class="col-xs-2">
+                        <label for="ex3"></label>
+                        {{-- <input class="form-control" id="ex3" type="text">
+                        --}}
+                        <button type="button" class="btn btn-outline-primary  form-control " onclick="add()">Agregar
+                            productos</button>
+                    </div>
+                    <div style="padding-right: 5px"></div>
                     <div class="col-xs-4">
                         <label for="ex3"></label>
                         {{-- <input class="form-control" id="ex3" type="text">
                         --}}
-                        <button type="button" class="btn btn-outline-primary  form-control mx-sm-2" onclick="add()">Agregar
-                            productos</button>
+                        <button type="button" class="btn btn-outline-success  form-control mx-sm-2" onclick="guardar()">Guardar cotización
+                        </button>
                     </div>
                 </div>
 
@@ -234,13 +240,13 @@
         });
         const clientes = {!!$clientes!!};
         console.log(clientes);
-
+        var id_num;
         var id = $('#id_cliente').select2()
             .on("select2:select", function(e) {
                 var selected_element = $(e.currentTarget);
                 var select_val = selected_element.val(); //obtiene el valor del value en el selector
                 console.log(parseInt(select_val))
-                var id_num = parseInt(select_val); //convierte se valor en integer
+                 id_num = parseInt(select_val); //convierte se valor en integer
 
                 $matriz = clientes.filter(x => x.id === id_num); //busca en el objeto los datos del cliente
                 console.log($matriz[0].nombre)
@@ -283,12 +289,12 @@
 
             var quitarp = document.getElementById('descuentoCliente').innerHTML;
             var descuentoC = quitarp.replace('%', ''); //le quita el simbolo porcentaje
-            console.log("sd " + descuentoC);
+            /* console.log("sd " + descuentoC);
 
 
             console.log(token);
             console.log(id_producto)
-            console.log(cantidad)
+            console.log(cantidad) */
             var data = {
                 _token: token,
                 descuento_cliente: descuentoC
@@ -314,12 +320,12 @@
 
             var quitarp = document.getElementById('descuentoCliente').innerHTML;
             var descuentoC = quitarp.replace('%', '');
-            console.log("sd " + descuentoC);
+           /*  console.log("sd " + descuentoC);
 
 
             console.log(token);
             console.log(id_producto)
-            console.log(cantidad)
+            console.log(cantidad) */
             var data = {
                 id_producto: id_producto,
                 cantidad: cantidad,
@@ -346,15 +352,15 @@
             var cantidad = $("#cantidad_producto").val();
 
             var id = $('#id_eliminar').val(); //id del producto en tmp
-            console.log(id);
+           /*  console.log(id); */
             var quitarp = document.getElementById('descuentoCliente').innerHTML;
             var descuentoC = quitarp.replace('%', ''); //le quita el simbolo porcentaje
-            console.log("sd " + descuentoC);
+            /* console.log("sd " + descuentoC); */
 
 
-            console.log(token);
+            /* console.log(token);
             console.log(id_producto)
-            console.log(cantidad)
+            console.log(cantidad) */
             var data = {
                 _token: token,
                 descuento_cliente: descuentoC,
@@ -371,6 +377,81 @@
                 }
             })
        }
+
+
+
+
+
+
+
+
+
+       ///validacion  de los elementos a enviar 
+       function guardar(){
+      var id_datosfiscales, vendedor, folio, id_cliente, observaciones;
+        
+        //obtener el id de datos fiscales *************************
+      /*   $(document).ready(function(){
+      $("input:radio[name=id_datosfiscales]").click(function () {    
+                console.log("La edad seleccionada es: " + $('input:radio[name=id_datosfiscales]:checked').val());
+                console.log("La edad seleccionada es: " + $(this).val());
+            id_datosfiscales =$('input:radio[name=id_datosfiscales]:checked').val();
+               
+            });
+
+        }) */
+
+        id_datosfiscales = $('input:radio[name="id_datosfiscales"]:checked').val();
+        console.log(id_datosfiscales)
+            //obtener id del cliente *****************************
+            id_cliente = id_num;
+          /*   console.log(id_cliente); */
+            //obtener vendedor*************************************
+
+            vendedor = document.getElementById('vendedor').value;
+            //obtener folio 
+            folio = document.getElementById('folio').value;
+           /*  console.log(folio) */
+
+            //obtener observaciones
+
+            observaciones = CKEDITOR.instances['editor'].getData();
+            ///****************************
+
+
+            /* validacion ********************** */
+
+            if(isNaN(id_datosfiscales)){
+                alert("No has seleccionado los datos fiscales");
+                //document.getElementById('id_datosfiscales').focus();
+                return false
+            }
+            if(isNaN(id_cliente)){
+                alert("No has seleccionado el cliente");
+                //document.getElementById('id_cliente').focus();
+                return false;
+            }
+
+
+            var data = {
+                _token:'{{ csrf_token() }}',
+                id_datosfiscales: id_datosfiscales,
+                id_cliente:id_cliente,
+                vendedor: vendedor,
+                folio:folio,
+                observaciones: observaciones
+            }
+            console.log(data);
+            
+     } 
+
+       /* $(document).ready(function()
+        {
+            console.log("hola")
+            
+        }); */
+
+       //enviar a la url 
 
        
     </script>

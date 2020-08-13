@@ -103,7 +103,7 @@
                 @foreach($datos as $item)
                     <tr>
 
-                        <td>{{ $item->id }}</td>
+                      {{--   <td>{{ $item->id }}</td> --}}
                         <td class="nombre">{{ $item->nombre }}</td>
                         <td class="direccion">{{ $item->direccion }}</td>
                         <td class="rfc">{{ $item->rfc }}</td>

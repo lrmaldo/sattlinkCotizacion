@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 use App\cotizaciones;
 use Illuminate\Support\Facades\DB;
 use App\datosfiscales;
+use App\detalle_cotizacion;
 use App\impuestos;
 use App\productos;
 use App\tmp_detalle_cotizacion;
+use App\User;
 use DateTime;
-
+use Barryvdh\DomPDF\Facade as PDF;
 class CotizacionController extends Controller
 {
     /**
@@ -238,6 +240,75 @@ class CotizacionController extends Controller
 
         //return  var_dump($request->all());
         return $datos;
+    }
+
+
+
+    public function guardarCoti(Request $request){
+        session_start();
+        $session_id = session_id();
+        $tmp = tmp_detalle_cotizacion::where('session_id', $session_id)->get();
+        //guardar los productos  cotizados
+        $user = User::where('name','like','%'.$request->vendedor.'%')->first();
+        $cotizacion = new cotizaciones();
+        $cotizacion->folio = $request->folio;
+        $cotizacion->forma = 'null';
+        $cotizacion->id_datosfiscales = $request->id_datosfiscales ;
+        $cotizacion->descuento="20";
+        $cotizacion->id_cliente = $request->id_cliente;
+        $cotizacion->id_vendedor = $user->id;
+        $cotizacion->comentario= $request->observaciones;
+        $cotizacion->save();
+        $sumador_total= 0;
+
+        foreach($tmp as $item){
+
+            $preciototal = $item->tmp_precio * $item->tmp_cantidad;
+            $sumador_total += $preciototal; //sumador de totales
+
+
+            $detalle_cotizacion = new detalle_cotizacion();
+            $detalle_cotizacion->cantidad = $item->tmp_cantidad;
+            $detalle_cotizacion->precio = $item->tmp_precio;
+            $detalle_cotizacion->id_producto = $item->tmp_id_producto;
+            $detalle_cotizacion->id_cotizacion = $cotizacion->id;
+            $detalle_cotizacion->save();
+
+        }
+        //$cotizacion->total= $sumador_total;}
+        $Cliente = clientes::where('id',$request->id_cliente)->first();
+        $descuentoCliente = $Cliente->descuento/100;
+        $totalcondescuento = $sumador_total - ($sumador_total * $descuentoCliente);
+        $cotizacion->total = $totalcondescuento;
+        $cotizacion->descuento= $sumador_total * $descuentoCliente;
+        $cotizacion->save();
+
+        tmp_detalle_cotizacion::where('session_id', $session_id)->delete();
+
+        return $cotizacion->id;
+        
+        //fin de los productoss cotizados
+
+     /*    'id', 'folio', 'forma', 'comentario', 'id_datosfiscales',
+        'descuento','total','id_vendedor',
+        'id_cliente',
+        'id_detalle_cotizacion'  */
+
+        
+      
+    }
+
+
+    public function generadorPdf($id){
+
+          $pdf = app('dompdf.wrapper');
+        $data = cotizaciones::where('id',$id)->first();
+        
+       
+   
+        return \PDF::loadView('pdf.factura', $data)
+            ->setPaper('letter', 'portrait')
+            ->stream('archivo.pdf'); 
     }
 
     /**

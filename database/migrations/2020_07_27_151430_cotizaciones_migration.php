@@ -19,15 +19,14 @@ class CotizacionesMigration extends Migration
             $table->string('folio');
             $table->string('forma');
             $table->text('comentario');
-            $table->string('estatus')->comment('activar o desactivar producto');
+            $table->string('id_datosfiscales');
             $table->float('descuento',10,2);
             $table->float('total',10,2);
             $table->integer('id_vendedor')->unsigned()->nullable();/* foreign key vendedor */
             $table->foreign('id_vendedor')->references('id')->on('users')->onDelete('set null');
             $table->integer('id_cliente')->unsigned()->nullable();/* foreign key cliente */
             $table->foreign('id_cliente')->references('id')->on('clientes')->onDelete('set null');
-            $table->integer('id_detalle_cotizacion')->unsigned()->nullable(); /* foreign key detalle cotizacion */
-            $table->foreign('id_detalle_cotizacion')->references('id')->on('detalle_cotizacion')->onDelete('set null');
+           
             $table->timestamps();
         });
     }

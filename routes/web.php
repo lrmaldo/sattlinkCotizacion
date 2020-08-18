@@ -118,7 +118,12 @@ Route::get('/impuesto/{id}',[
         ]);
 /* Routes de cotizador */
 
-Route::resource('cotizador','CotizacionController');
+//Route::resource('cotizador','CotizacionController');
+Route::get('cotizador','CotizacionController@index');
+
+Route::get('cotizador/create',[
+    'as'=>'cotizador.create',
+    'uses'=> 'CotizacionController@create']);
 
 Route::post('cotizador/add',[
     'as'=>'cotizador.add',
@@ -134,3 +139,12 @@ Route::post('/cotizador/destroy_tmp',[
     'as' =>'cotizador.destroy_tmp',
     'uses'=>'CotizacionController@destroy_tmp'
     ]);
+
+/* Route::get('/cotizador/generar',[
+    'as'=>'cotizador.generar',
+    'uses'=>'CotizacionController@guardarCoti'  
+]); */
+
+Route::get('cotizador/generar','CotizacionController@guardarCoti');
+
+Route::get('/pdf/{id}','CotizacionController@generadorPdf');

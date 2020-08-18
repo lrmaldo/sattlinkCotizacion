@@ -391,15 +391,7 @@
       var id_datosfiscales, vendedor, folio, id_cliente, observaciones;
         
         //obtener el id de datos fiscales *************************
-      /*   $(document).ready(function(){
-      $("input:radio[name=id_datosfiscales]").click(function () {    
-                console.log("La edad seleccionada es: " + $('input:radio[name=id_datosfiscales]:checked').val());
-                console.log("La edad seleccionada es: " + $(this).val());
-            id_datosfiscales =$('input:radio[name=id_datosfiscales]:checked').val();
-               
-            });
-
-        }) */
+     
 
         id_datosfiscales = $('input:radio[name="id_datosfiscales"]:checked').val();
         console.log(id_datosfiscales)
@@ -441,9 +433,33 @@
                 folio:folio,
                 observaciones: observaciones
             }
-            console.log(data);
+            $.ajax({
+
+            type: 'get',
+            url: '/cotizador/generar',
+            data: data,
+            success: function(datos) {
+               // document.getElementById('resultado').innerHTML = datos;
+                //$('#resultado').html(datos);
+                VentanaCentrada('/pdf/'+datos,'Cotizacion','','1024','768','true');
+            }
+            })
+            //console.log(data);
+            //VentanaCentrada('/cotizador/generar/'+JSON.stringify(data),'Cotizacion','','1024','768','true');
             
+            //VentanaCentrada('/cotizador/generar/'+id_datosfiscales+'/'+observaciones,'Cotizacion','','1024','768','true');
+
+
      } 
+        function VentanaCentrada(theURL,winName,features, myWidth, myHeight, isCenter) { //v3.0
+  if(window.screen)if(isCenter)if(isCenter=="true"){
+    var myLeft = (screen.width-myWidth)/2;
+    var myTop = (screen.height-myHeight)/2;
+    features+=(features!='')?',':'';
+    features+=',left='+myLeft+',top='+myTop;
+  }
+  window.open(theURL,winName,features+((features!='')?',':'')+'width='+myWidth+',height='+myHeight);
+}    
 
        /* $(document).ready(function()
         {

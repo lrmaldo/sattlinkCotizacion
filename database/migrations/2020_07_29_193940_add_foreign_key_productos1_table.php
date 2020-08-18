@@ -13,10 +13,10 @@ class AddForeignKeyProductos1Table extends Migration
      */
     public function up()
     {
-       /*  Schema::table('productos', function (Blueprint $table) {
-            $table->integer('id_proveedores')->unsigned()->nullable();
-            $table->foreign('id_proveedores')->references('id')->on('proveedores')->onDelete('set null');
-        }); */
+         Schema::table('detalle_cotizacion', function (Blueprint $table) {
+            $table->integer('id_cotizacion')->unsigned()->nullable(); /* foreign key detalle cotizacion */
+            $table->foreign('id_cotizacion')->references('id')->on('cotizaciones')->onDelete('set null');
+        }); 
     }
 
     /**
@@ -26,8 +26,8 @@ class AddForeignKeyProductos1Table extends Migration
      */
     public function down()
     {
-       /*  Schema::table('productos', function (Blueprint $table) {
-            $table->dropForeign('productos_id_proveedores_foreign');
-        }); */
+        Schema::table('detalle_cotizacion', function (Blueprint $table) {
+            $table->dropForeign('detalle_cotizacion_id_cotizacion_foreign');
+        });
     }
 }

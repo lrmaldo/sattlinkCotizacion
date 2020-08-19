@@ -27,6 +27,7 @@ class User extends Authenticatable
         return $this->belongsTo('App\cotizaciones', 'id');
     }
 
+    
     public function roles()
 {
      return $this

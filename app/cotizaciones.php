@@ -14,6 +14,10 @@ class cotizaciones extends Model
     ];
     public function vendedor()
     {
-        return $this->hasOne('App\user','id_vendedor');
+        return $this->hasOne('App\User','id_vendedor');
+    }
+    public function cliente()
+    {
+        return $this->hasOne('App\clientes', 'id');
     }
 }

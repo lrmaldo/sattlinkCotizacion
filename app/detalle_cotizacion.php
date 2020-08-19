@@ -12,5 +12,8 @@ class detalle_cotizacion extends Model
     'id', 'cantidad','precio',
     'id_producto'/* foreign key */
 ];
+public function producto(){
+    return $this->belongsTo(productos::class,'id_producto');
+}
 
 }

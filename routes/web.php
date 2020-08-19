@@ -147,4 +147,12 @@ Route::post('/cotizador/destroy_tmp',[
 
 Route::get('cotizador/generar','CotizacionController@guardarCoti');
 
+//buscador de productos en la BD con un input
+Route::get('cotizador/autocomplete',[
+    'as'=>'cotizador.autocomplete',
+    'uses'=>'CotizacionController@autocompleteProducto'
+]);
+
+
+//generador de pdf con id de cotizacion
 Route::get('/pdf/{id}','CotizacionController@generadorPdf');

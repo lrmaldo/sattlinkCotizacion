@@ -121,29 +121,26 @@
             </form>
             <div class="">
                 <div class="form-group row float-right">
-                    <div class="col-xs-2 mx-sm-3">
-                        <label for="ex1">Buscar producto</label>
+                  
+                   {{--  <div class="col-md-12 ">
+                        <label for="ex2">Buscar producto</label>
+                        
+                            <input class="typeahead form-control  " style="" id="nombre_producto" type="text"
+                                name="nombre_producto">
 
-                        <select class="js-example-responsive form-control" style="width: 100%; height: 55%"
-                            name='id_producto' id='id_producto'>
-                            <option value=''>Seleccionar un producto</option>
-                            @foreach ($productos as $item)
-                                <option value='{{ $item->id }}'>{{ $item->nombre }}</option>
-
-                            @endforeach
-
-                        </select>
+                        
                     </div>
+
                     <div class="col-xs-3 mx-sm-3 ">
                         <label for="ex2">Cantidad</label>
                         <input class="form-control  " style="width: 70%" id="cantidad_producto" type="text"
                             name="cantidad_producto">
-                    </div>
+                    </div> --}}
                     <div class="col-xs-2">
                         <label for="ex3"></label>
                         {{-- <input class="form-control" id="ex3" type="text">
                         --}}
-                        <button type="button" class="btn btn-outline-primary  form-control " onclick="add()">Agregar
+                        <button type="button" class="btn btn-outline-primary  form-control " data-toggle="modal" data-target="#myModalProductos">Agregar
                             productos</button>
                     </div>
                     <div style="padding-right: 5px"></div>
@@ -153,6 +150,7 @@
                         --}}
                         <button type="button" class="btn btn-outline-success  form-control mx-sm-2" onclick="guardar()">Guardar cotización
                         </button>
+                        
                     </div>
                 </div>
 
@@ -229,6 +227,9 @@
         </div>
     </div>
 
+    {{-- modal productos --}}
+    @include('cotizador.modal_productos')
+
     <script>
         /* iniciar el ckeditor.js */
         initSample();
@@ -273,22 +274,34 @@
                 });
             });
         });
-        var id_producto = $('#id_producto').select2()
+      /*   var id_producto = $('#id_producto').select2()
             .on("select2:select", function(e) {
                 var selected_element = $(e.currentTarget);
                 id_producto = selected_element.val();
                 console.log(parseInt(id_producto));
 
 
-            });
+            }); */
+
+            /* buscador de productos */
+            var path = "{{ route('cotizador.autocomplete') }}";
+                        $('.typeahead').typeahead({
+                            source:  function (query, process) {
+                            return $.get(path, { query: query }, function (data) {
+                                    return process(data);
+                                });
+                            }
+                        });
+
         /* rescata la tabla del  de cotizacion del cliente  */
         function select() {
             var token = '{{ csrf_token() }}'; // ó $("#token").val() si lo tienes en una etiqueta html.
             //var id_producto;
             var cantidad = $("#cantidad_producto").val();
-
+           
             var quitarp = document.getElementById('descuentoCliente').innerHTML;
             var descuentoC = quitarp.replace('%', ''); //le quita el simbolo porcentaje
+           
             /* console.log("sd " + descuentoC);
 
 
@@ -313,19 +326,32 @@
 
 
         /* funcion de agregar productos */
-        function add() {
+        function add(id) {
+
+
             var token = '{{ csrf_token() }}'; // ó $("#token").val() si lo tienes en una etiqueta html.
-            //var id_producto;
-            var cantidad = $("#cantidad_producto").val();
+         
+            var cantidad = document.getElementById("cantidad-"+id).value; /* obtienen el valor del input de la tabla de productos */
+          
+            var id_producto = id; ///obtiene el id de producto
+            var quitarp = document.getElementById('descuentoCliente').innerHTML; //obtiene el descuento del cliente
+            var descuentoC = quitarp.replace('%', ''); // le quita el signo de porcentaje
+             if(isNaN(cantidad)){
+                 alert("Esto no es un número");
+                 document.getElementById("cantidad-"+id).focus();
+                 return false;
+             } 
+             if(cantidad===""){
+                 alert("no hay un valor númerico")
+                 document.getElementById("cantidad-"+id).value;
+                 return false;
+             }
 
-            var quitarp = document.getElementById('descuentoCliente').innerHTML;
-            var descuentoC = quitarp.replace('%', '');
-           /*  console.log("sd " + descuentoC);
 
-
-            console.log(token);
+            /* console.log(token);
             console.log(id_producto)
             console.log(cantidad) */
+           
             var data = {
                 id_producto: id_producto,
                 cantidad: cantidad,
@@ -339,6 +365,7 @@
                 data: data,
                 success: function(datos) {
                     document.getElementById('resultado').innerHTML = datos;
+                   
                     //$('#resultado').html(datos);
                 }
             })

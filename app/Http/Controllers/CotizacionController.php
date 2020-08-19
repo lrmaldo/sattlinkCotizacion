@@ -77,9 +77,10 @@ class CotizacionController extends Controller
         session_start();
         $session_id = session_id();
 
-        $producto = productos::where("id", $request->id_producto)->first();
+        //cambiar por un like
+         $producto = productos::where("id",'=',$request->id_producto)->first();
         
-        $exite_prod = tmp_detalle_cotizacion::where('tmp_id_producto',$request->id_producto)->first();
+        $exite_prod = tmp_detalle_cotizacion::where('tmp_id_producto',$producto->id)->first();
         if($exite_prod){
              $cantidadpre = tmp_detalle_cotizacion::find($exite_prod->id);
              $cantidadpre->tmp_cantidad = $request->cantidad;
@@ -162,6 +163,16 @@ class CotizacionController extends Controller
 
         //return  var_dump($request->all());
         return $datos;
+    }
+
+
+    /* buscador de nombre de productos para el input de busqueda */
+
+    public function autocompleteProducto(Request $request)
+    {
+        //$data = Item::select("title as name")->where("title","LIKE","%{$request->input('query')}%")->get();
+         $data = productos::select('nombre as name')->where('nombre','LIKE',"%".$request->input('query')."%")->get();
+        return response()->json($data);
     }
 
 

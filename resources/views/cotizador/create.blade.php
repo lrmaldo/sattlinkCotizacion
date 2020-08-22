@@ -140,6 +140,16 @@
                         <label for="ex3"></label>
                         {{-- <input class="form-control" id="ex3" type="text">
                         --}}
+                       
+                        <button type="button" class="btn btn-outline-info  form-control " data-toggle="modal" data-target="#myModalSyscom">Agregar
+                            Syscom</button>
+                    </div>
+                    <div style="padding-right: 10px"></div>
+                    <div class="col-xs-2">
+                        <label for="ex3"></label>
+                        {{-- <input class="form-control" id="ex3" type="text">
+                        --}}
+                       
                         <button type="button" class="btn btn-outline-primary  form-control " data-toggle="modal" data-target="#myModalProductos">Agregar
                             productos</button>
                     </div>
@@ -229,6 +239,9 @@
 
     {{-- modal productos --}}
     @include('cotizador.modal_productos')
+
+    {{-- modal de syscom --}}
+    @include('cotizador.modal_syscom')
 
     <script>
         /* iniciar el ckeditor.js */
@@ -498,4 +511,5 @@
 
        
     </script>
+    <script src="{{asset('js/modulosyscom/syscom.js')}}"></script>
 @endsection

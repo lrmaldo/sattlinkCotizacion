@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\cotizaciones;
+use App\impuestos;
+
 class HomeController extends Controller
 {
     /**
@@ -25,5 +27,11 @@ class HomeController extends Controller
     {
         $cotizaciones = cotizaciones::all();
         return view('home',compact('cotizaciones'));
+    }
+    public function tipocambio(Request $request){
+        $tipo = impuestos::find(1);
+        $tipo->tipo_cambio_syscom= $request->tipocambio;
+        $tipo->save();
+        return $request->all();
     }
 }

@@ -128,7 +128,7 @@
                                                 </span>
                                             @endif
                                         </div>
-                                        <div class="form-group">
+                                      {{--   <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                 <input class="custom-control-input" id="rememberPasswordCheck"
                                                     type="checkbox" name="remember"
@@ -137,7 +137,7 @@
                                                     for="rememberPasswordCheck">Recuerdame
                                                 </label>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div
                                             class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
                                             <a class="small" href="{{ route('password.request') }}">¿Olvidades tu

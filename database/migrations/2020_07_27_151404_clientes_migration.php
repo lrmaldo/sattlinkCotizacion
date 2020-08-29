@@ -22,8 +22,8 @@ class ClientesMigration extends Migration
             $table->string('estatus')->default('activo')->comment('activar o desactivar producto');
             $table->string('email')->nullable();
             $table->string('direccion')->nullable();
-            $table->string('telefono');
-            $table->double('descuento',8,2);
+            $table->string('telefono')->nullable();
+            $table->double('descuento',8,2)->nullable();
             $table->timestamps();
         });
     }

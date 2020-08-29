@@ -23,7 +23,11 @@
 {{-- formulario de impuesto --}}
 <div >
       
-
+<script>
+    $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+});
+</script>
 <form class="form-inline" role="form" method="get" action="/impuesto/{{$impuesto->id}}">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
        
@@ -36,11 +40,26 @@
             <div class="input-group-text">I.V.A. (%)</div>
           </div>
           <input type="text" class="form-control" style="text-align:right" id="impuesto" name="impuesto" placeholder="Impuesto" value="{{$impuesto->cantidad}}">
+          <div class="input-group-prepend">
+            <div class="input-group-text">%</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-3">
+        <label class="sr-only" for="inlineFormInputGroup"></label>
+        <div class="input-group md-2" data-toggle="tooltip" data-placement="top" title="Porcentaje de utilidad (syscom)">
+            <input type="text" class="form-control" style="text-align:right" id="utilidad" name="utilidad" placeholder="utilidad" value="{{$impuesto->utilidad}}">
+              <div class="input-group-prepend">
+                <div class="input-group-text">(%)</div>
+              </div>
         </div>
       </div>
     
       <div class="col-auto">
-        <button type="submit" class="btn btn-primary mb-2">Guardar</button>
+        <label class="sr-only" for="inlineFormInputGroup"></label>
+        <div class="input-group md-2">
+            <button type="submit" class="btn btn-primary mb-2">Guardar</button>
+        </div>
       </div>
     </div>
   </form>

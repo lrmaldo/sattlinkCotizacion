@@ -106,9 +106,10 @@ class DatosfiscalesController extends Controller
 
          $impuesto = impuestos::find($id);
          $impuesto->cantidad = $request->impuesto;
+         $impuesto->utilidad= $request->utilidad;
          $impuesto->save();
          //return $request->all();
-         return redirect('datos')->with('info',"I.V.A. actualizado");
+         return redirect('datos')->with('info',"datos actualizado");
 
     }
 

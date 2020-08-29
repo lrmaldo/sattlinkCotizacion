@@ -347,6 +347,7 @@
             var cantidad = document.getElementById("cantidad-"+id).value; /* obtienen el valor del input de la tabla de productos */
           
             var id_producto = id; ///obtiene el id de producto
+            console.log(id)
             var quitarp = document.getElementById('descuentoCliente').innerHTML; //obtiene el descuento del cliente
             var descuentoC = quitarp.replace('%', ''); // le quita el signo de porcentaje
              if(isNaN(cantidad)){
@@ -482,6 +483,7 @@
                // document.getElementById('resultado').innerHTML = datos;
                 //$('#resultado').html(datos);
                 VentanaCentrada('/pdf/'+datos,'Cotizacion','','1024','768','true');
+                /* hay que redireccionar al home */
             }
             })
             //console.log(data);

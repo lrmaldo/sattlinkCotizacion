@@ -10,10 +10,13 @@ use App\datosfiscales;
 use App\detalle_cotizacion;
 use App\impuestos;
 use App\productos;
+use App\tmp_cotizacion_syscom;
 use App\tmp_detalle_cotizacion;
 use App\User;
 use DateTime;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Auth;
+
 class CotizacionController extends Controller
 {
     /**
@@ -46,14 +49,13 @@ class CotizacionController extends Controller
             ->get();
         $folio = "";
         foreach ($consuta_folio as $cons) {
-          
+
             $folio = str_pad($cons->folio + 1, 4, "0", STR_PAD_LEFT) . "/" . date("Y");
-            
         }
-        if(count($consuta_folio)==0){
-            $folio = str_pad(1,4,"0",STR_PAD_LEFT)."/".date("Y");
+        if (count($consuta_folio) == 0) {
+            $folio = str_pad(1, 4, "0", STR_PAD_LEFT) . "/" . date("Y");
         }
-        
+
 
 
         $clientes = clientes::all();
@@ -75,25 +77,27 @@ class CotizacionController extends Controller
         $iva = ($impuesto->cantidad) / 100; //impuesto del 16 %
         $descuento_cliente = ((int) $request->descuento_cliente) / 100;
         session_start();
-        $session_id = session_id();
+        $session_id = Auth::user()->id;
+
+
 
         //cambiar por un like
-         $producto = productos::where("id",'=',$request->id_producto)->first();
-        
-        $exite_prod = tmp_detalle_cotizacion::where('tmp_id_producto',$producto->id)->first();
-        if($exite_prod){
-             $cantidadpre = tmp_detalle_cotizacion::find($exite_prod->id);
-             $cantidadpre->tmp_cantidad = $request->cantidad;
-             $cantidadpre->save();
-                                    
-                                    
-        }else{
-            
+        $producto = productos::where("id", '=', $request->id_producto)->first();
+
+        $exite_prod = tmp_detalle_cotizacion::where('tmp_id_producto', $producto->id)->first();
+        if ($exite_prod) {
+            $cantidadpre = tmp_detalle_cotizacion::find($exite_prod->id);
+            $cantidadpre->tmp_cantidad = $request->cantidad;
+            $cantidadpre->save();
+        } else {
+
+
             $tmp = new tmp_detalle_cotizacion();
             $tmp->tmp_cantidad = $request->cantidad;
             $tmp->tmp_precio = $producto->precio;
             $tmp->tmp_id_producto = $producto->id;
             $tmp->session_id = $session_id;
+
             $tmp->save();
         }
 
@@ -102,14 +106,17 @@ class CotizacionController extends Controller
         $actualizacion = tmp_detalle_cotizacion::all();
 
         foreach ($actualizacion as $update) {
-            $producto = productos::where('id', $update->tmp_id_producto)->first();
-            tmp_detalle_cotizacion::where('tmp_id_producto', $producto->id)
-                ->update(['tmp_precio' => $producto->precio,]);
+            if ($update->tmp_id_producto) {
+
+                $producto = productos::where('id', $update->tmp_id_producto)->first();
+                tmp_detalle_cotizacion::where('tmp_id_producto', $producto->id)
+                    ->update(['tmp_precio' => $producto->precio,]);
+            }
         }
         //fin de actualizacion de precios
-        
+
         //actualizar cantidad 
-       /*  $updat_catidad =tmp_detalle_cotizacion::where('tmp_id_producto',$request->id_producto)
+        /*  $updat_catidad =tmp_detalle_cotizacion::where('tmp_id_producto',$request->id_producto)
         ->update(['tmp_cantidad'])  */
 
         $datos = "";
@@ -118,7 +125,7 @@ class CotizacionController extends Controller
         $sumador_total = 0;
         foreach ($fortmp as $item) {
             $prod = productos::where('id', $item->tmp_id_producto)->first();
-           
+
             $preciototal = $item->tmp_precio * $item->tmp_cantidad;
             $sumador_total += $preciototal; //sumador de totales
 
@@ -126,8 +133,8 @@ class CotizacionController extends Controller
             <td style='text-align: center'>" . $prod->unidad . "</td>
             <td style='text-align: center'>" . $item->tmp_cantidad . "</td>
             <td>" . $prod->nombre . "</td>
-            <td style='text-align: center'>$" . number_format($item->tmp_precio, 2) . "</td>
-            <td style='text-align: center'>$" . number_format(($item->tmp_precio * $item->tmp_cantidad), 2) . "</td>
+            <td style='text-align: center'>$" . number_format(($item->tmp_precio / ($iva+1)), 2) . "</td>
+            <td style='text-align: center'>$" . number_format((($item->tmp_precio / ($iva+1)) * $item->tmp_cantidad), 2) . "</td>
             
             <td>
             <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
@@ -135,6 +142,28 @@ class CotizacionController extends Controller
             </td>                 
         </tr>";
         }
+
+        /* agregar syscom si es que hay */
+        if(tmp_cotizacion_syscom::all()){
+            $syscom =  tmp_cotizacion_syscom::where('session_id',Auth::user()->id)->get();
+            foreach($syscom as $producto_syscom){
+                $sumador_total +=($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom);
+                $datos = $datos . "<tr>
+                <td style='text-align: center'>" . $producto_syscom->tmp_unidad_syscom . "</td>
+                <td style='text-align: center'>" . $producto_syscom->tmp_cantidad_syscom . "</td>
+                <td>*" . $producto_syscom->tmp_titulo_syscom . "</td>
+                <td style='text-align: center'>$" . number_format($producto_syscom->tmp_precio_syscom, 2) . "</td>
+                <td style='text-align: center'>$" . number_format(($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom), 2) . "</td>
+                
+                <td>
+                <input type='hidden' id='id_eliminar' name='id_eliminar' value='$producto_syscom->tmp_id_syscom' />
+                <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$producto_syscom->tmp_id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+                </td>                 
+            </tr>";
+            }
+        }
+
+        /* *********************fin de agregar productos syscom******************************** */
         $datos = $datos . "<tr>
         <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
         <td style='text-align: center'><span >$" . number_format(($sumador_total / ($iva + 1)), 2) . "</span></td>
@@ -171,7 +200,7 @@ class CotizacionController extends Controller
     public function autocompleteProducto(Request $request)
     {
         //$data = Item::select("title as name")->where("title","LIKE","%{$request->input('query')}%")->get();
-         $data = productos::select('nombre as name')->where('nombre','LIKE',"%".$request->input('query')."%")->get();
+        $data = productos::select('nombre as name')->where('nombre', 'LIKE', "%" . $request->input('query') . "%")->get();
         return response()->json($data);
     }
 
@@ -184,8 +213,7 @@ class CotizacionController extends Controller
         $impuesto = impuestos::where('id', 1)->first();
         $iva = ($impuesto->cantidad) / 100; //impuesto del 16 %
         $descuento_cliente = ((int) $request->descuento_cliente) / 100;
-        session_start();
-        $session_id = session_id();
+
 
 
         //actualizar precios en la tabla temporal de detalle cotizaciones 
@@ -215,8 +243,8 @@ class CotizacionController extends Controller
         <td style='text-align: center'>" . $prod->unidad . "</td>
         <td style='text-align: center'>" . $item->tmp_cantidad . "</td>
         <td>" . $prod->nombre . "</td>
-        <td style='text-align: center'>$" . number_format($item->tmp_precio, 2) . "</td>
-        <td style='text-align: center'>$" . number_format(($item->tmp_precio * $item->tmp_cantidad), 2) . "</td>
+        <td style='text-align: center'>$" . number_format(($item->tmp_precio / ($iva+1)), 2) . "</td>
+        <td style='text-align: center'>$" . number_format((($item->tmp_precio / ($iva+1)) * $item->tmp_cantidad), 2) . "</td>
         
         <td>
         <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
@@ -224,6 +252,27 @@ class CotizacionController extends Controller
         </td>                 
     </tr>";
         }
+
+        if(tmp_cotizacion_syscom::all()){
+            $syscom =  tmp_cotizacion_syscom::where('session_id',Auth::user()->id)->get();
+            foreach($syscom as $producto_syscom){
+                $sumador_total +=($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom);
+                $datos = $datos . "<tr>
+                <td style='text-align: center'>" . $producto_syscom->tmp_unidad_syscom . "</td>
+                <td style='text-align: center'>" . $producto_syscom->tmp_cantidad_syscom . "</td>
+                <td>*" . $producto_syscom->tmp_titulo_syscom . "</td>
+                <td style='text-align: center'>$" . number_format($producto_syscom->tmp_precio_syscom, 2) . "</td>
+                <td style='text-align: center'>$" . number_format(($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom), 2) . "</td>
+                
+                <td>
+                <input type='hidden' id='id_eliminar' name='id_eliminar' value='$producto_syscom->tmp_id_syscom' />
+                <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$producto_syscom->tmp_id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+                </td>                 
+            </tr>";
+            }
+        }
+/*  ************************fin de agregacion de productos syscom */
+
         $datos = $datos . "<tr>
     <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
     <td style='text-align: center'><span >$" . number_format(($sumador_total / ($iva + 1)), 2) . "</span></td>
@@ -253,26 +302,135 @@ class CotizacionController extends Controller
         return $datos;
     }
 
+    public function add_syscom(Request $request)
+    {
+
+        /* exite producto actualizar cantidad y precio */
+        // $exite_producto  = tmp_cotizacion_syscom::all();
 
 
-    public function guardarCoti(Request $request){
+        $actualizacion =  tmp_cotizacion_syscom::where('tmp_id_producto_syscom', $request->id_producto_syscom)->first();
+        if ($request->id_producto_syscom == $actualizacion['tmp_id_producto_syscom']) {
+            tmp_cotizacion_syscom::where('tmp_id_producto_syscom', $request->id_producto_syscom)
+                ->update([
+                    'tmp_cantidad_syscom' => $request->cantidad,
+                    'tmp_precio_syscom' => $request->precio_syscom
+                ]);
+        } else {
+            $session_id = Auth::user()->id;
+
+
+            $tmp = new tmp_cotizacion_syscom();
+            $tmp->tmp_cantidad_syscom = $request->cantidad;
+            $tmp->tmp_precio_syscom = $request->precio_syscom;
+            $tmp->tmp_id_producto_syscom = $request->id_producto_syscom;
+            $tmp->session_id = $session_id;
+            $tmp->tmp_titulo_syscom = $request->titulo_syscom;
+            $tmp->tmp_unidad_syscom = $request->unidad_syscom;
+            $tmp->save();
+        }
+    }
+    /* function de cargar datos de los productos cotizados se envian a la funcion cargardatos desde ajax */
+
+    public function cargardatos(Request $request)
+    {
+        $impuesto = impuestos::where('id', 1)->first();
+        $iva = ($impuesto->cantidad) / 100; //impuesto del 16 %
+        $descuento_cliente = ((int) $request->descuento_cliente) / 100;
+
+
+
+        //actualizar precios en la tabla temporal de detalle cotizaciones 
+                $actualizacion = tmp_detalle_cotizacion::all();
+
+                foreach ($actualizacion as $update) {
+                    $producto = productos::where('id', $update->tmp_id_producto)->first();
+                    tmp_detalle_cotizacion::where('tmp_id_producto', $producto->id)
+                        ->update(['tmp_precio' => $producto->precio]);
+                }
+                //fin de actualizacion de precios
+
+                $datos = "";
+
+
+
+                $fortmp = tmp_detalle_cotizacion::all();
+                $sumador_total = 0;
+                foreach ($fortmp as $item) {
+
+                    $prod = productos::where('id', $item->tmp_id_producto)->first();
+
+                    $preciototal = $item->tmp_precio * $item->tmp_cantidad;
+                    $sumador_total += $preciototal; //sumador de totales
+
+                    $datos = $datos . "<tr>
+            <td style='text-align: center'>" . $prod->unidad . "</td>
+            <td style='text-align: center'>" . $item->tmp_cantidad . "</td>
+            <td>" . $prod->nombre . "</td>
+            <td style='text-align: center'>$" . number_format($item->tmp_precio, 2) . "</td>
+            <td style='text-align: center'>$" . number_format(($item->tmp_precio * $item->tmp_cantidad), 2) . "</td>
+            
+            <td>
+            <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
+            <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$item->id' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+            </td>                 
+        </tr>";
+                }
+
+        /* if(tmp_cotizacion_syscom::all()){
+        $syscom =  tmp_cotizacion_syscom::where('session_id',$session_id)->get();
+    } */
+
+
+                $datos = $datos . "<tr>
+        <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
+        <td style='text-align: center'><span >$" . number_format(($sumador_total / ($iva + 1)), 2) . "</span></td>
+
+        </tr>";
+                $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
+                $datos = $datos . "<tr>
+        <td colspan=4><span class='float-right'>I.V.A.</span></td>
+        <td style='text-align: center'><span >$" . number_format($total_con_iva, 2) . "</span></td>
+
+        </tr>";
+
+                $totalcondescuento = $sumador_total - ($sumador_total * $descuento_cliente);
+                $descuento = ($sumador_total * $descuento_cliente);
+                $datos = $datos . "<tr>
+        <td colspan=4><span class='float-right'>Descuento %</span></td>
+        <td style='text-align: center'><span >$" . $descuento . "</span></td>
+        </tr>";
+
+                $datos = $datos . "<tr>
+        <td colspan=4><span class='float-right'>TOTAL </span></td>
+        <td style='text-align: center'><span >$" . number_format($totalcondescuento, 2) . "</span></td>
+
+        </tr>";
+
+        //return  var_dump($request->all());
+        return $datos;
+    }
+
+
+    public function guardarCoti(Request $request)
+    {
         session_start();
         $session_id = session_id();
         $tmp = tmp_detalle_cotizacion::where('session_id', $session_id)->get();
         //guardar los productos  cotizados
-        $user = User::where('name','like','%'.$request->vendedor.'%')->first();
+        $user = User::where('name', 'like', '%' . $request->vendedor . '%')->first();
         $cotizacion = new cotizaciones();
         $cotizacion->folio = $request->folio;
         $cotizacion->forma = 'null';
-        $cotizacion->id_datosfiscales = $request->id_datosfiscales ;
-        $cotizacion->descuento="20";
+        $cotizacion->id_datosfiscales = $request->id_datosfiscales;
+        $cotizacion->descuento = "20";
         $cotizacion->id_cliente = $request->id_cliente;
         $cotizacion->id_vendedor = $user->id;
-        $cotizacion->comentario= $request->observaciones;
+        $cotizacion->comentario = $request->observaciones;
         $cotizacion->save();
-        $sumador_total= 0;
+        $sumador_total = 0;
 
-        foreach($tmp as $item){
+        foreach ($tmp as $item) {
 
             $preciototal = $item->tmp_precio * $item->tmp_cantidad;
             $sumador_total += $preciototal; //sumador de totales
@@ -284,42 +442,39 @@ class CotizacionController extends Controller
             $detalle_cotizacion->id_producto = $item->tmp_id_producto;
             $detalle_cotizacion->id_cotizacion = $cotizacion->id;
             $detalle_cotizacion->save();
-
         }
         //$cotizacion->total= $sumador_total;}
-        $Cliente = clientes::where('id',$request->id_cliente)->first();
-        $descuentoCliente = $Cliente->descuento/100;
+        $Cliente = clientes::where('id', $request->id_cliente)->first();
+        $descuentoCliente = $Cliente->descuento / 100;
         $totalcondescuento = $sumador_total - ($sumador_total * $descuentoCliente);
         $cotizacion->total = $totalcondescuento;
-        $cotizacion->descuento= $sumador_total * $descuentoCliente;
+        $cotizacion->descuento = $sumador_total * $descuentoCliente;
         $cotizacion->save();
 
         tmp_detalle_cotizacion::where('session_id', $session_id)->delete();
 
         return $cotizacion->id;
-        
+
         //fin de los productoss cotizados
 
-     /*    'id', 'folio', 'forma', 'comentario', 'id_datosfiscales',
+        /*    'id', 'folio', 'forma', 'comentario', 'id_datosfiscales',
         'descuento','total','id_vendedor',
         'id_cliente',
         'id_detalle_cotizacion'  */
-
-        
-      
     }
 
 
-    public function generadorPdf($id){
+    public function generadorPdf($id)
+    {
 
-          $pdf = app('dompdf.wrapper');
-        $data = cotizaciones::where('id',$id)->first();
-        
-       
-   
+        $pdf = app('dompdf.wrapper');
+        $data = cotizaciones::where('id', $id)->first();
+
+
+
         return \PDF::loadView('pdf.factura', $data)
             ->setPaper('letter', 'portrait')
-            ->stream('archivo.pdf'); 
+            ->stream('archivo.pdf');
     }
 
     /**
@@ -399,8 +554,8 @@ class CotizacionController extends Controller
         <td style='text-align: center'>" . $prod->unidad . "</td>
         <td style='text-align: center'>" . $item->tmp_cantidad . "</td>
         <td>" . $prod->nombre . "</td>
-        <td style='text-align: center'>$" . number_format($item->tmp_precio, 2) . "</td>
-        <td style='text-align: center'>$" . number_format(($item->tmp_precio * $item->tmp_cantidad), 2) . "</td>
+        <td style='text-align: center'>$" . number_format(($item->tmp_precio / ($iva+1)), 2) . "</td>
+        <td style='text-align: center'>$" . number_format((($item->tmp_precio / ($iva+1)) * $item->tmp_cantidad), 2) . "</td>
         
         <td>
         <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
@@ -408,6 +563,26 @@ class CotizacionController extends Controller
         </td>                 
     </tr>";
         }
+        /*  agregar productos syscom si es que existe */
+        if(tmp_cotizacion_syscom::all()){
+            $syscom =  tmp_cotizacion_syscom::where('session_id',Auth::user()->id)->get();
+            foreach($syscom as $producto_syscom){
+                $sumador_total +=($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom);
+                $datos = $datos . "<tr>
+                <td style='text-align: center'>" . $producto_syscom->tmp_unidad_syscom . "</td>
+                <td style='text-align: center'>" . $producto_syscom->tmp_cantidad_syscom . "</td>
+                <td>*" . $producto_syscom->tmp_titulo_syscom . "</td>
+                <td style='text-align: center'>$" . number_format($producto_syscom->tmp_precio_syscom, 2) . "</td>
+                <td style='text-align: center'>$" . number_format(($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom), 2) . "</td>
+                
+                <td>
+                <input type='hidden' id='id_eliminar' name='id_eliminar' value='$producto_syscom->tmp_id_syscom' />
+                <button type='button' class='btn btn-danger' onclick='eliminar_syscom('$producto_syscom->tmp_id_syscom')' 'value='$producto_syscom->tmp_id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+                </td>                 
+            </tr>";
+            }
+        }
+        /* *******************fin de agregacion de productos syscom ****************** */
         $datos = $datos . "<tr>
     <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
     <td style='text-align: center'><span >$" . number_format(($sumador_total / ($iva + 1)), 2) . "</span></td>

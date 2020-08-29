@@ -35,6 +35,7 @@
                         <th>Modelo</th>
                         <th>Existencias</th>
                         <th>Precio</th>
+                        <th>Unidad de Medida</th>
                         <th>Cantidad</th>
                         <th>Agregar</th>
 

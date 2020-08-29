@@ -21,6 +21,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::post('/tipocambio','HomeController@tipocambio');
 
 /* Rutas de usuarios */
 Route::resource('/usuarios','UsersController');
@@ -129,6 +130,12 @@ Route::post('cotizador/add',[
     'as'=>'cotizador.add',
     'uses'=>'CotizacionController@add'
 ]);
+/* agregar producto syscom */
+Route::post('cotizador/add_syscom',[
+    'as'=>'cotizador.add_syscom',
+    'uses'=>'CotizacionController@add_syscom'
+]);
+
 
 Route::post('cotizador/add_cliente',[
     'as'=>'cotizador.add',
@@ -146,6 +153,9 @@ Route::post('/cotizador/destroy_tmp',[
 ]); */
 
 Route::get('cotizador/generar','CotizacionController@guardarCoti');
+
+/* cargar datos productos internos y syscom cotizados */
+Route::get('cotizador/cargardatos','CotizacionController@cargardatos');
 
 //buscador de productos en la BD con un input
 Route::get('cotizador/autocomplete',[

@@ -146,7 +146,13 @@ Route::post('/cotizador/destroy_tmp',[
     'as' =>'cotizador.destroy_tmp',
     'uses'=>'CotizacionController@destroy_tmp'
     ]);
+    Route::post('/cotizador/destroy_tmp_syscom',[
+        'as' =>'cotizador.destroy_tmp_syscom',
+        'uses'=>'CotizacionController@destroy_tmp_syscom'
+        ]);
 
+
+    /* destroy_tmp_syscom */
 /* Route::get('/cotizador/generar',[
     'as'=>'cotizador.generar',
     'uses'=>'CotizacionController@guardarCoti'  

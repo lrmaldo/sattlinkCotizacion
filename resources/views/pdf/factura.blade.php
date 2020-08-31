@@ -1,18 +1,65 @@
+   @php
+      $impuesto = App\impuestos::where('id', 1)->first();
+      $iva = ($impuesto->cantidad) / 100; //impuesto del 16 %  
+      $folio = App\cotizaciones::find($id)->folio 
+   @endphp
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>Cotizacion {{$id}}</title>
+<title>Cotizacion {{$folio}}</title>
+<style>
+    /** Define the margins of your page **/
+    @page {
+        margin: 100px 25px;
+    }
+
+    header {
+        position: fixed;
+        top: -60px;
+        left: 0px;
+        right: 0px;
+        height: 50px;
+
+        /** Extra personal styles **/
+        background-color: #ffffff;
+        color: rgb(0, 0, 0);
+        text-align: center;
+        line-height: 35px;
+    }
+
+    footer {
+        position: fixed; 
+        bottom: 0px; 
+        left: 0px; 
+        right: 0px;
+        height: 0px; 
+
+        /** Extra personal styles **/
+        background-color: #ffffff;
+        color: rgb(0, 0, 0);
+        text-align: center;
+        line-height: 0px;
+    }
+</style>
+ 
 </head>
 <body>
-   
-    
-<page backtop="15mm" backbottom="15mm" backleft="15mm" backright="15mm" style="font-size: 12pt; font-family: arial" >
-    <page_footer>
+
+    <header>
+      
+    </header>
+
+    <footer>
+        Copyright  Sattlink &copy; <?php echo date("Y");?> 
+    </footer>
+  
+<main backtop="15mm" backbottom="15mm" backleft="15mm" backright="15mm" style="font-size: 12pt; font-family: arial" >
+  {{--   <page_footer>
     <table class="page_footer">
-       {{--  <tr>
+        <tr>
 
             <td style="width: 50%; text-align: left">
                 P&aacute;gina [[page_cu]]/[[page_nb]]
@@ -20,9 +67,9 @@
             <td style="width: 50%; text-align: right">
                 &copy; {{date('Y')}} 
             </td>
-        </tr> --}}
+        </tr>
     </table>
-</page_footer>
+</page_footer> --}}
 
 <?php $datos = App\datosfiscales::where('id',$id_datosfiscales)->first()?>
 <table cellspacing="0" style="width: 100%; white-space:nowrap;">
@@ -41,7 +88,7 @@
             
         </td>
         <td style="width: 25%;text-align:right">
-        COTIZACION Nº {{$id}}
+        COTIZACION Nº {{$folio}}
         </td>
         
     </tr>
@@ -133,11 +180,33 @@
                 
             @endphp
         @endforeach
+
+        {{-- si exite productos syscom --}}
+
+        @php
+            $detalle_syscom = App\detalle_cotizacion_syscom::where('id_cotizacion',$id)->get();
+        @endphp
+        
+        @foreach ($detalle_syscom as $syscom)
+        <tr>
+            <td style="width: 5%; text-align: center">{{$syscom->unidad_syscom}}</td>
+            <td style="width: 5%; text-align: center">{{$syscom->cantidad}}</td>
+            <td style="width: 60%; text-align: left">{{$syscom->titulo_syscom}}</td>
+                <td style="width: 15%; text-align: right">${{number_format(($syscom->precio/(1+$iva)),2)}}</td>
+            <td style="width: 15%; text-align: right">${{number_format(($syscom->precio*$syscom->cantidad)/(1+$iva),2)}}</td>
+                
+            </tr>
+
+            @php
+            $sumador+=$sumador+($syscom->precio*$syscom->cantidad)
+            
+        @endphp
+        @endforeach
     </table>
       {{-- calcular iba y el descuento --}}
       @php
-          $impuesto = App\impuestos::where('id', 1)->first();
-          $iva = ($impuesto->cantidad) / 100; //impuesto del 16 %
+         /*  $impuesto = App\impuestos::where('id', 1)->first();
+          $iva = ($impuesto->cantidad) / 100; //impuesto del 16 % */
           $total_iva = $sumador - ($sumador / ($iva + 1));
           $subtotal = $sumador/($iva+1);
           
@@ -168,13 +237,13 @@
 	<br>
           <table cellspacing="0" style="width: 100%; text-align: center; font-size: 11pt;">
             <tr>
-                    <td style="width:50%;text-align:center"><?php echo $comentario ?> </td>
+                    <td style="width:50%;"><?php echo $comentario ?> </td>
                   
             </tr>
 			
         </table>
     <br><br><br><br>
-</page>
+    </main>
 </body>
 </html>
 

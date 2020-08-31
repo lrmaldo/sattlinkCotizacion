@@ -8,6 +8,7 @@ use App\cotizaciones;
 use Illuminate\Support\Facades\DB;
 use App\datosfiscales;
 use App\detalle_cotizacion;
+use App\detalle_cotizacion_syscom;
 use App\impuestos;
 use App\productos;
 use App\tmp_cotizacion_syscom;
@@ -257,16 +258,17 @@ class CotizacionController extends Controller
             $syscom =  tmp_cotizacion_syscom::where('session_id',Auth::user()->id)->get();
             foreach($syscom as $producto_syscom){
                 $sumador_total +=($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom);
+                $total_precio_cantidad = $producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom;
                 $datos = $datos . "<tr>
                 <td style='text-align: center'>" . $producto_syscom->tmp_unidad_syscom . "</td>
                 <td style='text-align: center'>" . $producto_syscom->tmp_cantidad_syscom . "</td>
                 <td>*" . $producto_syscom->tmp_titulo_syscom . "</td>
-                <td style='text-align: center'>$" . number_format($producto_syscom->tmp_precio_syscom, 2) . "</td>
-                <td style='text-align: center'>$" . number_format(($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom), 2) . "</td>
+                <td style='text-align: center'>$" . number_format(($producto_syscom->tmp_precio_syscom/($iva+1)), 2) . "</td>
+                <td style='text-align: center'>$" . number_format(($total_precio_cantidad/($iva+1)), 2) . "</td>
                 
                 <td>
-                <input type='hidden' id='id_eliminar' name='id_eliminar' value='$producto_syscom->tmp_id_syscom' />
-                <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$producto_syscom->tmp_id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+                <input type='hidden' id='id_eliminar_syscom' name='id_eliminar_syscom' value='$producto_syscom->tmp_id_producto_syscom' />
+                <button type='button' class='btn btn-danger' onclick='eliminar_syscom()' value='$producto_syscom->tmp_id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
                 </td>                 
             </tr>";
             }
@@ -307,22 +309,31 @@ class CotizacionController extends Controller
 
         /* exite producto actualizar cantidad y precio */
         // $exite_producto  = tmp_cotizacion_syscom::all();
-
-
+        $impuesto = impuestos::find(1)->cantidad;
+        $tipo_cambio = impuestos::find(1)->tipo_cambio_syscom;
+        $utilidad = impuestos::find(1)->utilidad;
         $actualizacion =  tmp_cotizacion_syscom::where('tmp_id_producto_syscom', $request->id_producto_syscom)->first();
         if ($request->id_producto_syscom == $actualizacion['tmp_id_producto_syscom']) {
+
+            $conversion = ($request->precio_syscom * $tipo_cambio);/* conversion e impuesto */
+            $precio_iva = $conversion +($conversion *($impuesto/100));
+            $precio_con_utilidad = $precio_iva / (1 -($utilidad/100));
+            /* var precio_con_iva = conversion + (conversion*0.16); */
             tmp_cotizacion_syscom::where('tmp_id_producto_syscom', $request->id_producto_syscom)
                 ->update([
                     'tmp_cantidad_syscom' => $request->cantidad,
-                    'tmp_precio_syscom' => $request->precio_syscom
+                    'tmp_precio_syscom' => $precio_con_utilidad
                 ]);
         } else {
             $session_id = Auth::user()->id;
 
+            $conversion = ($request->precio_syscom * $tipo_cambio);/* conversion e impuesto */
+            $precio_iva = $conversion +($conversion *($impuesto/100));
+            $precio_con_utilidad = $precio_iva / (1 -($utilidad/100));
 
             $tmp = new tmp_cotizacion_syscom();
             $tmp->tmp_cantidad_syscom = $request->cantidad;
-            $tmp->tmp_precio_syscom = $request->precio_syscom;
+            $tmp->tmp_precio_syscom = $precio_con_utilidad;
             $tmp->tmp_id_producto_syscom = $request->id_producto_syscom;
             $tmp->session_id = $session_id;
             $tmp->tmp_titulo_syscom = $request->titulo_syscom;
@@ -416,7 +427,7 @@ class CotizacionController extends Controller
     {
         session_start();
         $session_id = session_id();
-        $tmp = tmp_detalle_cotizacion::where('session_id', $session_id)->get();
+        $tmp = tmp_detalle_cotizacion::where('session_id', Auth::user()->id)->get();
         //guardar los productos  cotizados
         $user = User::where('name', 'like', '%' . $request->vendedor . '%')->first();
         $cotizacion = new cotizaciones();
@@ -443,6 +454,25 @@ class CotizacionController extends Controller
             $detalle_cotizacion->id_cotizacion = $cotizacion->id;
             $detalle_cotizacion->save();
         }
+        if(tmp_cotizacion_syscom::where('session_id',Auth::user()->id)){
+            $syscom = tmp_cotizacion_syscom::where('session_id',Auth::user()->id)->get();
+            foreach($syscom as $tmp_syscom){
+
+                $sumador_total += $tmp_syscom->tmp_precio_syscom*$tmp_syscom->tmp_cantidad_syscom;/* suma de productos su existe en syscom */
+               
+                $detalle_cotizacion_syscom = new detalle_cotizacion_syscom();
+                $detalle_cotizacion_syscom->cantidad = $tmp_syscom->tmp_cantidad_syscom;
+                $detalle_cotizacion_syscom->id_producto_syscom = $tmp_syscom->tmp_id_producto_syscom;
+                $detalle_cotizacion_syscom->titulo_syscom= $tmp_syscom->tmp_titulo_syscom;
+                $detalle_cotizacion_syscom->unidad_syscom = $tmp_syscom->tmp_unidad_syscom;
+                $detalle_cotizacion_syscom->precio= $tmp_syscom->tmp_precio_syscom;
+                $detalle_cotizacion_syscom->session_id= $tmp_syscom->session_id;
+                $detalle_cotizacion_syscom->id_cotizacion= $cotizacion->id;
+                $detalle_cotizacion_syscom->save();
+            }
+            //$detalle_cotizacion_syscom->
+
+        }
         //$cotizacion->total= $sumador_total;}
         $Cliente = clientes::where('id', $request->id_cliente)->first();
         $descuentoCliente = $Cliente->descuento / 100;
@@ -451,7 +481,10 @@ class CotizacionController extends Controller
         $cotizacion->descuento = $sumador_total * $descuentoCliente;
         $cotizacion->save();
 
-        tmp_detalle_cotizacion::where('session_id', $session_id)->delete();
+        tmp_detalle_cotizacion::where('session_id', Auth::user()->id)->delete();
+        if(tmp_cotizacion_syscom::where('session_id',Auth::user()->id)){
+            tmp_cotizacion_syscom::where('session_id',Auth::user()->id)->delete();
+        }
 
         return $cotizacion->id;
 
@@ -568,16 +601,103 @@ class CotizacionController extends Controller
             $syscom =  tmp_cotizacion_syscom::where('session_id',Auth::user()->id)->get();
             foreach($syscom as $producto_syscom){
                 $sumador_total +=($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom);
+                $total_precio_cantidad = $producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom;
                 $datos = $datos . "<tr>
                 <td style='text-align: center'>" . $producto_syscom->tmp_unidad_syscom . "</td>
                 <td style='text-align: center'>" . $producto_syscom->tmp_cantidad_syscom . "</td>
                 <td>*" . $producto_syscom->tmp_titulo_syscom . "</td>
-                <td style='text-align: center'>$" . number_format($producto_syscom->tmp_precio_syscom, 2) . "</td>
-                <td style='text-align: center'>$" . number_format(($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom), 2) . "</td>
+                <td style='text-align: center'>$" . number_format(($producto_syscom->tmp_precio_syscom/($iva+1)), 2) . "</td>
+                <td style='text-align: center'>$" . number_format(($total_precio_cantidad/($iva+1)), 2) . "</td>
                 
                 <td>
-                <input type='hidden' id='id_eliminar' name='id_eliminar' value='$producto_syscom->tmp_id_syscom' />
-                <button type='button' class='btn btn-danger' onclick='eliminar_syscom('$producto_syscom->tmp_id_syscom')' 'value='$producto_syscom->tmp_id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+                <input type='hidden' id='id_eliminar_syscom' name='id_eliminar_syscom' value='$producto_syscom->tmp_id_producto_syscom' />
+                <button type='button' class='btn btn-danger' onclick='eliminar_syscom()' value='$producto_syscom->tmp_id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+                </td>                 
+            </tr>";
+            }
+        }
+        /* *******************fin de agregacion de productos syscom ****************** */
+        $datos = $datos . "<tr>
+    <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
+    <td style='text-align: center'><span >$" . number_format(($sumador_total / ($iva + 1)), 2) . "</span></td>
+   
+    </tr>";
+
+
+        $totalcondescuento = $sumador_total - ($sumador_total * $descuento_cliente);
+        $descuento = ($sumador_total * $descuento_cliente);
+        $datos = $datos . "<tr>
+    <td colspan=4><span class='float-right'>Descuento %</span></td>
+    <td style='text-align: center'><span >$" . $descuento . "</span></td>
+    </tr>";
+        $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
+        $datos = $datos . "<tr>
+    <td colspan=4><span class='float-right'>I.V.A.</span></td>
+    <td style='text-align: center'><span >$" . number_format($total_con_iva, 2) . "</span></td>
+    
+    </tr>";
+        $datos = $datos . "<tr>
+    <td colspan=4><span class='float-right'>TOTAL </span></td>
+    <td style='text-align: center'><span >$" . number_format($totalcondescuento, 2) . "</span></td>
+    
+    </tr>";
+
+        //return  var_dump($request->all());
+        return $datos;
+    }
+
+
+    public function destroy_tmp_syscom(Request $request){
+        tmp_cotizacion_syscom::where('tmp_id_producto_syscom',$request->id)->delete();
+        
+        $impuesto = impuestos::where('id', 1)->first();
+        $iva = ($impuesto->cantidad) / 100; //impuesto del 16 %
+        $descuento_cliente = ((int) $request->descuento_cliente) / 100;
+        session_start();
+        $session_id = session_id();
+
+
+
+        $datos = "";
+
+        $fortmp = tmp_detalle_cotizacion::all();
+        $sumador_total = 0;
+        foreach ($fortmp as $item) {
+            //actualizar precios si es que existe
+
+            $prod = productos::where('id', $item->tmp_id_producto)->first();
+            $preciototal = $item->tmp_precio * $item->tmp_cantidad;
+            $sumador_total += $preciototal; //sumador de totales
+
+            $datos = $datos . "<tr>
+        <td style='text-align: center'>" . $prod->unidad . "</td>
+        <td style='text-align: center'>" . $item->tmp_cantidad . "</td>
+        <td>" . $prod->nombre . "</td>
+        <td style='text-align: center'>$" . number_format(($item->tmp_precio / ($iva+1)), 2) . "</td>
+        <td style='text-align: center'>$" . number_format((($item->tmp_precio / ($iva+1)) * $item->tmp_cantidad), 2) . "</td>
+        
+        <td>
+        <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
+        <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$item->id' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+        </td>                 
+    </tr>";
+        }
+        /*  agregar productos syscom si es que existe */
+        if(tmp_cotizacion_syscom::all()){
+            $syscom =  tmp_cotizacion_syscom::where('session_id',Auth::user()->id)->get();
+            foreach($syscom as $producto_syscom){
+                $sumador_total +=($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom);
+                $total_precio_cantidad = $producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom;
+                $datos = $datos . "<tr>
+                <td style='text-align: center'>" . $producto_syscom->tmp_unidad_syscom . "</td>
+                <td style='text-align: center'>" . $producto_syscom->tmp_cantidad_syscom . "</td>
+                <td>*" . $producto_syscom->tmp_titulo_syscom . "</td>
+                <td style='text-align: center'>$" . number_format(($producto_syscom->tmp_precio_syscom/($iva+1)), 2) . "</td>
+                <td style='text-align: center'>$" . number_format(($total_precio_cantidad/($iva+1)), 2) . "</td>
+                
+                <td>
+                <input type='hidden' id='id_eliminar_syscom' name='id_eliminar_syscom' value='$producto_syscom->tmp_id_producto_syscom' />
+                <button type='button' class='btn btn-danger' onclick='eliminar_syscom()' value='$producto_syscom->tmp_id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
                 </td>                 
             </tr>";
             }

@@ -247,6 +247,10 @@
         /* iniciar el ckeditor.js */
         initSample();
         /* fin del ckeditor */
+        $(document).ready(function(){
+            select()/* inicia el cotizador si es que hay productos agregados */
+        });
+
         jQuery(document).ready(function($) {
             $(document).ready(function() {
                 $('.mi-selector').select2();
@@ -379,7 +383,7 @@
                 data: data,
                 success: function(datos) {
                     document.getElementById('resultado').innerHTML = datos;
-                   
+                    $('.toast').toast('show');
                     //$('#resultado').html(datos);
                 }
             })

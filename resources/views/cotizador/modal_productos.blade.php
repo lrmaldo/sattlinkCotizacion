@@ -1,6 +1,22 @@
 <!-- Modal -->
 <div class="modal fade bs-example-modal-lg" id="myModalProductos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
+  
+    <!-- Then put toasts within -->
+    <div class="toast" role="alert"  aria-live="assertive" style="align-content: flex-end" aria-atomic="true">
+      <div class="toast-header">
+      <img src="{{asset('img/logo.png')}}" width="100px" class="rounded mr-2" alt="...">
+        <strong class="mr-auto"></strong>
+        <small></small>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="toast-body">
+        Producto Agregado correctamente
+      </div>
+    </div>
+      
+  <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
             <h4 class="modal-title" id="myModalLabel">Buscar productos</h4>

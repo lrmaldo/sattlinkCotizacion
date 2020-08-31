@@ -190,6 +190,8 @@ $("#outer_div").empty();
                 producto= null;
                 //$('#resultado').html(datos);
                 select();
+                $('.toast').toast('show');
+
             }
         })
 
@@ -225,5 +227,39 @@ $("#outer_div").empty();
     }
 
 
+       //eliminar producto de la tabla de contizaciones
+       function eliminar_syscom(){
+           
+        var token = $('meta[name="_token"]').attr('content'); // ó $("#token").val() si lo tienes en una etiqueta html.
+             //var id_producto;
+             //var cantidad = $("#cantidad_producto").val();
+ 
+             var id = $('#id_eliminar_syscom').val(); //id del producto en tmp
+             console.log(token);   
+             console.log(id);
+            /*  var quitarp = document.getElementById('descuentoCliente').innerHTML;
+             var descuentoC = quitarp.replace('%', ''); //le quita el simbolo porcentaje */
+             /* console.log("sd " + descuentoC); */
+ 
+ 
+             /* console.log(token);
+             console.log(id_producto)
+             console.log(cantidad) */
+             var data = {
+                 _token: token,
+                
+                 id: id
+             };
+             $.ajax({
+ 
+                 type: 'post',
+                 url: '/cotizador/destroy_tmp_syscom',
+                 data: data,
+                 success: function(datos) {
+                     document.getElementById('resultado').innerHTML = datos;
+                     //$('#resultado').html(datos);
+                 }
+             })
+        }
 
 

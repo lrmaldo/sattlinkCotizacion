@@ -157,9 +157,9 @@ class CotizacionController extends Controller
                 <td style='text-align: center'>$" . number_format(($producto_syscom->tmp_precio_syscom * $producto_syscom->tmp_cantidad_syscom), 2) . "</td>
                 
                 <td>
-                <input type='hidden' id='id_eliminar' name='id_eliminar' value='$producto_syscom->tmp_id_syscom' />
-                <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$producto_syscom->tmp_id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
-                </td>                 
+                <input type='hidden' id='id_eliminar_syscom' name='id_eliminar_syscom' value='$producto_syscom->tmp_id_producto_syscom' />
+                <button type='button' class='btn btn-danger' onclick='eliminar_syscom()' value='$producto_syscom->tmp_id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+                </td>                
             </tr>";
             }
         }
@@ -274,29 +274,41 @@ class CotizacionController extends Controller
             }
         }
 /*  ************************fin de agregacion de productos syscom */
-
+        $importe= ($sumador_total / ($iva + 1)); 
         $datos = $datos . "<tr>
-    <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
-    <td style='text-align: center'><span >$" . number_format(($sumador_total / ($iva + 1)), 2) . "</span></td>
+    <td colspan=4><span class='float-right'>IMPORTE TOTAL </span></td>
+    <td style='text-align: center'><span >$" . number_format($importe, 2) . "</span></td>
    
     </tr>";
-        $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
+    $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
+/* calcular el descuento si hay */
+    
+    $descuento = bcdiv(($importe * $descuento_cliente),'1','2');
+    $datos = $datos . "<tr>
+<td colspan=4><span class='float-right'>Descuento %</span></td>
+<td style='text-align: center'><span >$" . $descuento . "</span></td>
+</tr>";
+/* IMPORTE MENOS EL DESCUENTO */
+
+$subtotal=$importe- $descuento;
+$datos = $datos . "<tr>
+<td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
+<td style='text-align: center'><span >$" . number_format($subtotal, 2) . "</span></td>
+
+</tr>";
+/* el iva del total  */
+$impuestoIVA = $subtotal*$iva;
         $datos = $datos . "<tr>
 <td colspan=4><span class='float-right'>I.V.A.</span></td>
-<td style='text-align: center'><span >$" . number_format($total_con_iva, 2) . "</span></td>
+<td style='text-align: center'><span >$" . number_format($impuestoIVA, 2) . "</span></td>
 
 </tr>";
 
-        $totalcondescuento = $sumador_total - ($sumador_total * $descuento_cliente);
-        $descuento = ($sumador_total * $descuento_cliente);
-        $datos = $datos . "<tr>
-    <td colspan=4><span class='float-right'>Descuento %</span></td>
-    <td style='text-align: center'><span >$" . $descuento . "</span></td>
-    </tr>";
-
+       
+$total=$subtotal+$impuestoIVA;
         $datos = $datos . "<tr>
     <td colspan=4><span class='float-right'>TOTAL </span></td>
-    <td style='text-align: center'><span >$" . number_format($totalcondescuento, 2) . "</span></td>
+    <td style='text-align: center'><span >$" . number_format($total, 2) . "</span></td>
     
     </tr>";
 
@@ -317,23 +329,29 @@ class CotizacionController extends Controller
 
             $conversion = ($request->precio_syscom * $tipo_cambio);/* conversion e impuesto */
             $precio_iva = $conversion +($conversion *($impuesto/100));
-            $precio_con_utilidad = $precio_iva / (1 -($utilidad/100));
+            /* ============================================================== */
+            $precio_con_utilidad = ($precio_iva + ($precio_iva *($utilidad/100)))*1.082;
+            /* $precio_con_utilidad = $precio_iva + ($precio_iva *($utilidad/100)); */  /* formula de utilidad  */
+            /* ============================================================  */
             /* var precio_con_iva = conversion + (conversion*0.16); */
             tmp_cotizacion_syscom::where('tmp_id_producto_syscom', $request->id_producto_syscom)
                 ->update([
                     'tmp_cantidad_syscom' => $request->cantidad,
-                    'tmp_precio_syscom' => $precio_con_utilidad
+                    'tmp_precio_syscom' => $precio_con_utilidad,
+                    'tmp_precio_dolar_syscom' =>$request->precio_syscom
                 ]);
         } else {
             $session_id = Auth::user()->id;
 
             $conversion = ($request->precio_syscom * $tipo_cambio);/* conversion e impuesto */
             $precio_iva = $conversion +($conversion *($impuesto/100));
-            $precio_con_utilidad = $precio_iva / (1 -($utilidad/100));
-
+           /* ============================================================== */
+            $precio_con_utilidad = ($precio_iva + ($precio_iva *($utilidad/100)))*1.082;  /* formula de utilidad  */
+            /* ============================================================  */
             $tmp = new tmp_cotizacion_syscom();
             $tmp->tmp_cantidad_syscom = $request->cantidad;
             $tmp->tmp_precio_syscom = $precio_con_utilidad;
+            $tmp->tmp_precio_dolar_syscom = $request->precio_syscom;
             $tmp->tmp_id_producto_syscom = $request->id_producto_syscom;
             $tmp->session_id = $session_id;
             $tmp->tmp_titulo_syscom = $request->titulo_syscom;
@@ -345,81 +363,7 @@ class CotizacionController extends Controller
 
     public function cargardatos(Request $request)
     {
-        $impuesto = impuestos::where('id', 1)->first();
-        $iva = ($impuesto->cantidad) / 100; //impuesto del 16 %
-        $descuento_cliente = ((int) $request->descuento_cliente) / 100;
-
-
-
-        //actualizar precios en la tabla temporal de detalle cotizaciones 
-                $actualizacion = tmp_detalle_cotizacion::all();
-
-                foreach ($actualizacion as $update) {
-                    $producto = productos::where('id', $update->tmp_id_producto)->first();
-                    tmp_detalle_cotizacion::where('tmp_id_producto', $producto->id)
-                        ->update(['tmp_precio' => $producto->precio]);
-                }
-                //fin de actualizacion de precios
-
-                $datos = "";
-
-
-
-                $fortmp = tmp_detalle_cotizacion::all();
-                $sumador_total = 0;
-                foreach ($fortmp as $item) {
-
-                    $prod = productos::where('id', $item->tmp_id_producto)->first();
-
-                    $preciototal = $item->tmp_precio * $item->tmp_cantidad;
-                    $sumador_total += $preciototal; //sumador de totales
-
-                    $datos = $datos . "<tr>
-            <td style='text-align: center'>" . $prod->unidad . "</td>
-            <td style='text-align: center'>" . $item->tmp_cantidad . "</td>
-            <td>" . $prod->nombre . "</td>
-            <td style='text-align: center'>$" . number_format($item->tmp_precio, 2) . "</td>
-            <td style='text-align: center'>$" . number_format(($item->tmp_precio * $item->tmp_cantidad), 2) . "</td>
-            
-            <td>
-            <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
-            <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$item->id' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
-            </td>                 
-        </tr>";
-                }
-
-        /* if(tmp_cotizacion_syscom::all()){
-        $syscom =  tmp_cotizacion_syscom::where('session_id',$session_id)->get();
-    } */
-
-
-                $datos = $datos . "<tr>
-        <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
-        <td style='text-align: center'><span >$" . number_format(($sumador_total / ($iva + 1)), 2) . "</span></td>
-
-        </tr>";
-                $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
-                $datos = $datos . "<tr>
-        <td colspan=4><span class='float-right'>I.V.A.</span></td>
-        <td style='text-align: center'><span >$" . number_format($total_con_iva, 2) . "</span></td>
-
-        </tr>";
-
-                $totalcondescuento = $sumador_total - ($sumador_total * $descuento_cliente);
-                $descuento = ($sumador_total * $descuento_cliente);
-                $datos = $datos . "<tr>
-        <td colspan=4><span class='float-right'>Descuento %</span></td>
-        <td style='text-align: center'><span >$" . $descuento . "</span></td>
-        </tr>";
-
-                $datos = $datos . "<tr>
-        <td colspan=4><span class='float-right'>TOTAL </span></td>
-        <td style='text-align: center'><span >$" . number_format($totalcondescuento, 2) . "</span></td>
-
-        </tr>";
-
-        //return  var_dump($request->all());
-        return $datos;
+      
     }
 
 
@@ -434,7 +378,7 @@ class CotizacionController extends Controller
         $cotizacion->folio = $request->folio;
         $cotizacion->forma = 'null';
         $cotizacion->id_datosfiscales = $request->id_datosfiscales;
-        $cotizacion->descuento = "20";
+        $cotizacion->descuento = "0";
         $cotizacion->id_cliente = $request->id_cliente;
         $cotizacion->id_vendedor = $user->id;
         $cotizacion->comentario = $request->observaciones;
@@ -466,6 +410,7 @@ class CotizacionController extends Controller
                 $detalle_cotizacion_syscom->titulo_syscom= $tmp_syscom->tmp_titulo_syscom;
                 $detalle_cotizacion_syscom->unidad_syscom = $tmp_syscom->tmp_unidad_syscom;
                 $detalle_cotizacion_syscom->precio= $tmp_syscom->tmp_precio_syscom;
+                $detalle_cotizacion_syscom->precio_dolar = $tmp_syscom->tmp_precio_dolar_syscom;
                 $detalle_cotizacion_syscom->session_id= $tmp_syscom->session_id;
                 $detalle_cotizacion_syscom->id_cotizacion= $cotizacion->id;
                 $detalle_cotizacion_syscom->save();
@@ -503,11 +448,30 @@ class CotizacionController extends Controller
         $pdf = app('dompdf.wrapper');
         $data = cotizaciones::where('id', $id)->first();
 
+        $tipo_cambio = impuestos::find(1)->tipo_cambio_syscom;/* tipo de cambio */
+        $iva = impuestos::find(1)->iva;
+        $utilidad = impuestos::find(1)->utilidad;
+        $actualizar = detalle_cotizacion_syscom::where('id_cotizacion',$id)->get();
+        
+
+        foreach($actualizar as $item){
+            $conversion =$tipo_cambio*$item->precio_dolar;
+            $precio_iva = $conversion +($iva/100);
+          /* ======================================================================== formula con utilidad y un plus */
+            $precio_con_utilidad = ($precio_iva + ($precio_iva *($utilidad/100)))*1.082;
+            /* ============================================================================ */
+            detalle_cotizacion_syscom::where('id_producto_syscom',$item->id_producto_syscom)
+            ->update([
+                'precio'=>$precio_con_utilidad/* actualiza el precio de acuerdo al tipo del dolar del dia */
+            ]);
+        }
+
 
 
         return \PDF::loadView('pdf.factura', $data)
             ->setPaper('letter', 'portrait')
             ->stream('archivo.pdf');
+           
     }
 
     /**
@@ -617,28 +581,41 @@ class CotizacionController extends Controller
             }
         }
         /* *******************fin de agregacion de productos syscom ****************** */
+        $importe= ($sumador_total / ($iva + 1)); 
         $datos = $datos . "<tr>
-    <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
-    <td style='text-align: center'><span >$" . number_format(($sumador_total / ($iva + 1)), 2) . "</span></td>
+    <td colspan=4><span class='float-right'>IMPORTE TOTAL </span></td>
+    <td style='text-align: center'><span >$" . number_format($importe, 2) . "</span></td>
    
     </tr>";
-
-
-        $totalcondescuento = $sumador_total - ($sumador_total * $descuento_cliente);
-        $descuento = ($sumador_total * $descuento_cliente);
-        $datos = $datos . "<tr>
-    <td colspan=4><span class='float-right'>Descuento %</span></td>
-    <td style='text-align: center'><span >$" . $descuento . "</span></td>
-    </tr>";
-        $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
-        $datos = $datos . "<tr>
-    <td colspan=4><span class='float-right'>I.V.A.</span></td>
-    <td style='text-align: center'><span >$" . number_format($total_con_iva, 2) . "</span></td>
+    $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
+/* calcular el descuento si hay */
     
-    </tr>";
+    $descuento = bcdiv(($importe * $descuento_cliente),'1','2');
+    $datos = $datos . "<tr>
+<td colspan=4><span class='float-right'>Descuento %</span></td>
+<td style='text-align: center'><span >$" . $descuento . "</span></td>
+</tr>";
+/* IMPORTE MENOS EL DESCUENTO */
+
+$subtotal=$importe- $descuento;
+$datos = $datos . "<tr>
+<td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
+<td style='text-align: center'><span >$" . number_format($subtotal, 2) . "</span></td>
+
+</tr>";
+/* el iva del total  */
+$impuestoIVA = $subtotal*$iva;
+        $datos = $datos . "<tr>
+<td colspan=4><span class='float-right'>I.V.A.</span></td>
+<td style='text-align: center'><span >$" . number_format($impuestoIVA, 2) . "</span></td>
+
+</tr>";
+
+       
+$total=$subtotal+$impuestoIVA;
         $datos = $datos . "<tr>
     <td colspan=4><span class='float-right'>TOTAL </span></td>
-    <td style='text-align: center'><span >$" . number_format($totalcondescuento, 2) . "</span></td>
+    <td style='text-align: center'><span >$" . number_format($total, 2) . "</span></td>
     
     </tr>";
 
@@ -703,28 +680,41 @@ class CotizacionController extends Controller
             }
         }
         /* *******************fin de agregacion de productos syscom ****************** */
+        $importe= ($sumador_total / ($iva + 1)); 
         $datos = $datos . "<tr>
-    <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
-    <td style='text-align: center'><span >$" . number_format(($sumador_total / ($iva + 1)), 2) . "</span></td>
+    <td colspan=4><span class='float-right'>IMPORTE TOTAL </span></td>
+    <td style='text-align: center'><span >$" . number_format($importe, 2) . "</span></td>
    
     </tr>";
-
-
-        $totalcondescuento = $sumador_total - ($sumador_total * $descuento_cliente);
-        $descuento = ($sumador_total * $descuento_cliente);
-        $datos = $datos . "<tr>
-    <td colspan=4><span class='float-right'>Descuento %</span></td>
-    <td style='text-align: center'><span >$" . $descuento . "</span></td>
-    </tr>";
-        $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
-        $datos = $datos . "<tr>
-    <td colspan=4><span class='float-right'>I.V.A.</span></td>
-    <td style='text-align: center'><span >$" . number_format($total_con_iva, 2) . "</span></td>
+    $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
+/* calcular el descuento si hay */
     
-    </tr>";
+    $descuento = bcdiv(($importe * $descuento_cliente),'1','2');
+    $datos = $datos . "<tr>
+<td colspan=4><span class='float-right'>Descuento %</span></td>
+<td style='text-align: center'><span >$" . $descuento . "</span></td>
+</tr>";
+/* IMPORTE MENOS EL DESCUENTO */
+
+$subtotal=$importe- $descuento;
+$datos = $datos . "<tr>
+<td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
+<td style='text-align: center'><span >$" . number_format($subtotal, 2) . "</span></td>
+
+</tr>";
+/* el iva del total  */
+$impuestoIVA = $subtotal*$iva;
+        $datos = $datos . "<tr>
+<td colspan=4><span class='float-right'>I.V.A.</span></td>
+<td style='text-align: center'><span >$" . number_format($impuestoIVA, 2) . "</span></td>
+
+</tr>";
+
+       
+$total=$subtotal+$impuestoIVA;
         $datos = $datos . "<tr>
     <td colspan=4><span class='float-right'>TOTAL </span></td>
-    <td style='text-align: center'><span >$" . number_format($totalcondescuento, 2) . "</span></td>
+    <td style='text-align: center'><span >$" . number_format($total, 2) . "</span></td>
     
     </tr>";
 

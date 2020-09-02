@@ -18,6 +18,7 @@ class CreateTmpCotizacionSyscomsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('tmp_cantidad_syscom');
             $table->float('tmp_precio_syscom',10,2);
+            $table->float('tmp_precio_dolar_syscom',10,2)->nullable();
             $table->integer('tmp_id_producto_syscom')->nullable();
             $table->string('tmp_unidad_syscom')->nullable();
             $table->text('tmp_titulo_syscom')->nullable();

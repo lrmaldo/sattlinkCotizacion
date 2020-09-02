@@ -1,8 +1,12 @@
    @php
       $impuesto = App\impuestos::where('id', 1)->first();
       $iva = ($impuesto->cantidad) / 100; //impuesto del 16 %  
-      $folio = App\cotizaciones::find($id)->folio 
+      $folio = App\cotizaciones::find($id)->folio;
+      
+     
    @endphp
+
+ 
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -176,7 +180,7 @@
         </tr>
         {{-- sumador de productos --}}
             @php
-                $sumador+=$sumador+($item->producto->precio*$item->cantidad)
+                $sumador+=($item->producto->precio*$item->cantidad)
                 
             @endphp
         @endforeach
@@ -191,14 +195,14 @@
         <tr>
             <td style="width: 5%; text-align: center">{{$syscom->unidad_syscom}}</td>
             <td style="width: 5%; text-align: center">{{$syscom->cantidad}}</td>
-            <td style="width: 60%; text-align: left">{{$syscom->titulo_syscom}}</td>
-                <td style="width: 15%; text-align: right">${{number_format(($syscom->precio/(1+$iva)),2)}}</td>
-            <td style="width: 15%; text-align: right">${{number_format(($syscom->precio*$syscom->cantidad)/(1+$iva),2)}}</td>
+            <td style="width: 60%; text-align: left">*{{$syscom->titulo_syscom}}</td>
+                <td style="width: 15%; text-align: right">${{number_format(($syscom->precio),2)}}</td>
+            <td style="width: 15%; text-align: right">${{number_format(($syscom->precio*$syscom->cantidad),2)}}</td>
                 
             </tr>
 
             @php
-            $sumador+=$sumador+($syscom->precio*$syscom->cantidad)
+            $sumador+=($syscom->precio*$syscom->cantidad);
             
         @endphp
         @endforeach
@@ -207,29 +211,48 @@
       @php
          /*  $impuesto = App\impuestos::where('id', 1)->first();
           $iva = ($impuesto->cantidad) / 100; //impuesto del 16 % */
-          $total_iva = $sumador - ($sumador / ($iva + 1));
-          $subtotal = $sumador/($iva+1);
+
+
           
+          $importe= $sumador;
+          $total_precio_costo =($importe-(($impuesto->utilidad/100)*$importe));
+        
+          //$conversion +($conversion *($iva/100))
+          // $subtotal = $sumador;
+          //$totalcondescuento = $subtotal - ($subtotal * $descuento_cliente)
+          
+          
+          $descuento_cliente = $importe*($cliente->descuento/100);
+          $subtotal = $importe - $descuento_cliente;
+          $total_del_iva = $subtotal*$iva;
+          
+          //$total_neto = ($subtotal-$descuento_cliente)+$total_del_iva; 
+          $total_neto = $subtotal + $total_del_iva;
       @endphp
     <table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 11pt;padding:1mm;">
         
         <tr>
-            <th style="width: 87%; text-align: right;">SUB-TOTAL : </th>
+            <th style="width: 87%; text-align: right;">IMPORTE TOTAL : </th>
+        <th style="width: 13%; text-align: right;">&#36;{{number_format($importe,2)}}</th>
+        </tr>
+        <tr>
+            <th style="width: 87%; text-align: right;">DESCUENTO({{$cliente->descuento}}%): </th>
+        <th style="width: 13%; text-align: right;">&#36;{{number_format($descuento_cliente,2)}}</th>
+        </tr>
+
+        <tr>
+            <th style="width: 87%; text-align: right;">SUB-TOTAL: </th>
         <th style="width: 13%; text-align: right;">&#36;{{number_format($subtotal,2)}}</th>
         </tr>
         <tr>
             <th style="width: 87%; text-align: right;">I.V.A. : </th>
-        <th style="width: 13%; text-align: right;">&#36;{{number_format($total_iva,2)}}</th>
+            <th style="width: 13%; text-align: right;">&#36;{{number_format($total_del_iva,2)}}</th>
         </tr>
 
-        <tr>
-            <th style="width: 87%; text-align: right;">DESCUENTO: </th>
-        <th style="width: 13%; text-align: right;">&#36;{{number_format($descuento,2)}}</th>
-        </tr>
 
         <tr>
             <th style="width: 87%; text-align: right;">TOTAL : </th>
-        <th style="width: 13%; text-align: right;">&#36;{{number_format($total,2)}}</th>
+        <th style="width: 13%; text-align: right;">&#36;{{number_format($total_neto,2)}}</th>
         </tr>
     </table>
 	*** Precios incluyen IVA ***

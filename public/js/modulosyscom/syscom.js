@@ -85,18 +85,18 @@ $("#outer_div").empty();
             for(var i=0;i<data.productos.length;i++){
                html= "<tr>";
                
-                console.log('succes: ' + data.productos[i].precios);
+                console.log('succes: ' + data.productos[i].precios.precio_descuento);
                 var precio = parseFloat(data.productos[i].precios.precio_descuento);
                 var text;
                 
                 var conversion = cambio*precio;
-                var precio_con_iva = conversion + (conversion*0.16);
+                var precio_sin_iva = conversion;
                 if( Object.keys(data.productos[i].precios).length === 0 ){
                     text="Sin precio"
                 }else{
 
-                     text = "$"+ precio_con_iva.toFixed(2)+"MXN"
-                     console.log(precio_con_iva.toFixed(2))
+                     text = "$"+ precio_sin_iva.toFixed(2)+"MXN"
+                     console.log(precio_sin_iva.toFixed(2))
                 }
                     html=html.concat("<td> <img src='"+data.productos[i].img_portada+"' style='width: 200px' ></td>");
                     html=html.concat("<td>"+data.productos[i].titulo+"</td>");
@@ -113,7 +113,7 @@ $("#outer_div").empty();
                        
 
              
-                        console.log(html)
+                        //console.log(html)
                         $("#outer_div").append(html);
                 //document.getElementById('resultados').innerHTML = data.productos[i].titulo;
             }
@@ -136,7 +136,7 @@ $("#outer_div").empty();
        var unidad = document.getElementById('unidadS-'+id_producto).value;
        producto = datos_busqueda.productos.find(elemento => elemento.producto_id === id_producto) //busca el producto en el array de busqueda
        
-       console.log(producto)
+       //console.log(producto)
        console.log(producto.precios.precio_descuento)
        /* ****************** validacion de campos  */
          if(isNaN(cantidad)){
@@ -162,12 +162,11 @@ $("#outer_div").empty();
 
         //convertir precio en  pesos mexicanos y ponerle el precio con iva
 
-        var precio = parseFloat(producto.precios.precio_descuento);
+        var precio = producto.precios.precio_descuento; /* precio sin iva */
         
-        var conversion = cambio*precio;
+        /* var conversion = precio; */
         
-        var precio_con_iva = conversion + (conversion*0.16);
-        //fin de la conversion 
+     
 
 
 

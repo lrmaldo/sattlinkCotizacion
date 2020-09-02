@@ -488,6 +488,7 @@
                 //$('#resultado').html(datos);
                 VentanaCentrada('/pdf/'+datos,'Cotizacion','','1024','768','true');
                 /* hay que redireccionar al home */
+                location.href="/home"
             }
             })
             //console.log(data);

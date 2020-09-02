@@ -21,17 +21,18 @@
       <div class="modal-content">
         <div class="modal-header">
             <h4 class="modal-title" id="myModalLabel">Buscar productos en Syscom</h4>
+           
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
           
-        
           <div class="input-group">
             <input type="text" class="form-control col-md-6" id="buscador" name="buscador" onkeypress="pulsar(event)" placeholder="Busca por modelo,marca">
             <div class="input-group-btn ">
               <button class="btn btn-default" type="submit" onclick="busqueda()">
                 <i class=" fas fa-search"></i>
               </button>
+              <small><strong>Los productos no tienen I.V.A</strong></small>
             </div>
             
           </div>

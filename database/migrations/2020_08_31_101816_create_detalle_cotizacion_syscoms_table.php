@@ -18,6 +18,7 @@ class CreateDetalleCotizacionSyscomsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('cantidad');
             $table->float('precio',10,2);
+            $table->float('precio_dolar',10,2)->nullable();
             $table->integer('id_producto_syscom')->nullable();
             $table->string('session_id',100)->nullable();
             $table->string('unidad_syscom')->nullable();

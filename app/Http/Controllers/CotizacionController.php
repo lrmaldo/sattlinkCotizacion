@@ -18,6 +18,8 @@ use DateTime;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Mail;
+
 class CotizacionController extends Controller
 {
     /**
@@ -444,33 +446,39 @@ $total=$subtotal+$impuestoIVA;
 
     public function generadorPdf($id)
     {
+        $exite = cotizaciones::where('id', $id)->first();
+        if(isset($exite)){
 
-        $pdf = app('dompdf.wrapper');
-        $data = cotizaciones::where('id', $id)->first();
-
-        $tipo_cambio = impuestos::find(1)->tipo_cambio_syscom;/* tipo de cambio */
-        $iva = impuestos::find(1)->iva;
-        $utilidad = impuestos::find(1)->utilidad;
-        $actualizar = detalle_cotizacion_syscom::where('id_cotizacion',$id)->get();
-        
-
-        foreach($actualizar as $item){
-            $conversion =$tipo_cambio*$item->precio_dolar;
-            $precio_iva = $conversion +($iva/100);
-          /* ======================================================================== formula con utilidad y un plus */
-            $precio_con_utilidad = ($precio_iva + ($precio_iva *($utilidad/100)))*1.082;
-            /* ============================================================================ */
-            detalle_cotizacion_syscom::where('id_producto_syscom',$item->id_producto_syscom)
-            ->update([
-                'precio'=>$precio_con_utilidad/* actualiza el precio de acuerdo al tipo del dolar del dia */
-            ]);
+            $pdf = app('dompdf.wrapper');
+            $data = cotizaciones::where('id', $id)->first();
+    
+            $tipo_cambio = impuestos::find(1)->tipo_cambio_syscom;/* tipo de cambio */
+            $iva = impuestos::find(1)->iva;
+            $utilidad = impuestos::find(1)->utilidad;
+            $actualizar = detalle_cotizacion_syscom::where('id_cotizacion',$id)->get();
+            
+    
+            foreach($actualizar as $item){
+                $conversion =$tipo_cambio*$item->precio_dolar;
+                $precio_iva = $conversion +($iva/100);
+              /* ======================================================================== formula con utilidad y un plus */
+                $precio_con_utilidad = ($precio_iva + ($precio_iva *($utilidad/100)))*1.082;
+                /* ============================================================================ */
+                detalle_cotizacion_syscom::where('id_producto_syscom',$item->id_producto_syscom)
+                ->update([
+                    'precio'=>$precio_con_utilidad/* actualiza el precio de acuerdo al tipo del dolar del dia */
+                ]);
+            }
+    
+    
+    
+            return \PDF::loadView('pdf.factura', $data)
+                ->setPaper('letter', 'portrait')
+                ->stream('archivo.pdf');
         }
-
-
-
-        return \PDF::loadView('pdf.factura', $data)
-            ->setPaper('letter', 'portrait')
-            ->stream('archivo.pdf');
+        else{
+            return response()->view('errors.error',[],500);
+        }
            
     }
 
@@ -731,5 +739,70 @@ $total=$subtotal+$impuestoIVA;
     public function destroy($id)
     {
         //
+    }
+
+
+    /* envio de correo con adjunto del  archvivo pdf */
+    public function email_pdf(Request $request,$id){
+
+
+        $exite = cotizaciones::where('id', $id)->first();
+        if(isset($exite)){
+
+          
+            $data = cotizaciones::where('id', $id)->first();
+    
+            $tipo_cambio = impuestos::find(1)->tipo_cambio_syscom;/* tipo de cambio */
+            $iva = impuestos::find(1)->iva;
+            $utilidad = impuestos::find(1)->utilidad;
+            $actualizar = detalle_cotizacion_syscom::where('id_cotizacion',$id)->get();
+            
+    
+            foreach($actualizar as $item){
+                $conversion =$tipo_cambio*$item->precio_dolar;
+                $precio_iva = $conversion +($iva/100);
+              /* ======================================================================== formula con utilidad y un plus */
+                $precio_con_utilidad = ($precio_iva + ($precio_iva *($utilidad/100)))*1.082;
+                /* ============================================================================ */
+                detalle_cotizacion_syscom::where('id_producto_syscom',$item->id_producto_syscom)
+                ->update([
+                    'precio'=>$precio_con_utilidad/* actualiza el precio de acuerdo al tipo del dolar del dia */
+                ]);
+            }
+    
+            $email_cliente = $request['email'.$id];
+            $asunto = $request['asunto'.$id];
+            $msj= $request['mensaje'.$id];
+            $datos =array(
+
+                'mensaje' =>$msj,
+            );
+
+            
+
+    
+            $pdf =  PDF::loadView('pdf.factura', $data)
+                ->setPaper('letter', 'portrait');
+
+                Mail::send('email.enviar_pdf', $datos, function ($mail) use ($pdf,$asunto,$email_cliente) {
+                    $mail->attachData($pdf->output(), 'cotizacion.pdf');
+                    $mail->from('info@sattlink', 'Soporte Sattlink');
+                    $mail->subject($asunto);
+                    $mail->to($email_cliente);
+                });
+                return redirect('home');
+
+        }
+        else{
+            return response()->view('errors.error',[],500);
+        }
+
+       /*  Mail::send('emails/templates/send-invoice', $messageData, function ($mail) use ($pdf) {
+            $mail->from('john@styde.net', 'John Doe');
+            $mail->to('user@styde.net');
+            $mail->attachData($pdf->output(), 'test.pdf');
+        }); */
+        
+        
     }
 }

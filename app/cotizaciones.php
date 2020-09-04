@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class cotizaciones extends Model
 {
+    protected $primaryKey ='id';
+    protected $table = 'cotizaciones';
     protected $fillable = [
         'id', 'folio', 'forma', 'comentario', 'id_datosfiscales',
         'descuento','total','id_vendedor',
@@ -14,10 +16,10 @@ class cotizaciones extends Model
     ];
     public function vendedor()
     {
-        return $this->hasOne('App\User','id_vendedor');
+        return $this->hasOne(User::class,'id','id_vendedor');
     }
     public function cliente()
     {
-        return $this->hasOne('App\clientes', 'id');
+        return $this->hasOne(clientes::class, 'id','id_cliente');
     }
 }

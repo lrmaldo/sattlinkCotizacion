@@ -228,6 +228,14 @@
           
           //$total_neto = ($subtotal-$descuento_cliente)+$total_del_iva; 
           $total_neto = $subtotal + $total_del_iva;
+         
+          /* guardar el total */
+          $guardar_coti = App\cotizaciones::find($id);
+          $guardar_coti->total = $descuento_cliente;
+          $guardar_coti->total = $total_neto;
+          $guardar_coti->save();
+          
+          
       @endphp
     <table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 11pt;padding:1mm;">
         

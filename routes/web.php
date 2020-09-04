@@ -138,19 +138,23 @@ Route::post('cotizador/add_syscom',[
 
 
 Route::post('cotizador/add_cliente',[
-    'as'=>'cotizador.add',
-    'uses'=>'CotizacionController@add_cliente'
+'as'=>'cotizador.add',
+'uses'=>'CotizacionController@add_cliente'
 ]);
 
 Route::post('/cotizador/destroy_tmp',[
-    'as' =>'cotizador.destroy_tmp',
-    'uses'=>'CotizacionController@destroy_tmp'
-    ]);
-    Route::post('/cotizador/destroy_tmp_syscom',[
-        'as' =>'cotizador.destroy_tmp_syscom',
-        'uses'=>'CotizacionController@destroy_tmp_syscom'
-        ]);
+'as' =>'cotizador.destroy_tmp',
+'uses'=>'CotizacionController@destroy_tmp'
+]);
+Route::post('/cotizador/destroy_tmp_syscom',[
+'as' =>'cotizador.destroy_tmp_syscom',
+'uses'=>'CotizacionController@destroy_tmp_syscom'
+]);
 
+Route::post('/cotizador/email_pdf/{id}',[
+    'as' =>'cotizador.email_pdf',
+    'uses'=>'CotizacionController@email_pdf'
+    ]);
 
     /* destroy_tmp_syscom */
 /* Route::get('/cotizador/generar',[

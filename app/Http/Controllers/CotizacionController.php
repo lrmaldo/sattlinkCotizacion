@@ -772,7 +772,7 @@ $total=$subtotal+$impuestoIVA;
     
             $email_cliente = $request['email'.$id];
             $asunto = $request['asunto'.$id];
-            $msj= $request['mensaje'.$id];
+            $msj= $request['comentario'.$id];
             $datos =array(
 
                 'mensaje' =>$msj,
@@ -790,7 +790,7 @@ $total=$subtotal+$impuestoIVA;
                     $mail->subject($asunto);
                     $mail->to($email_cliente);
                 });
-                return redirect('home');
+                return redirect('home')->with('success','Correo enviado exitosamente');
 
         }
         else{

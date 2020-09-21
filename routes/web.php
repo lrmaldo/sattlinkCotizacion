@@ -125,6 +125,15 @@ Route::get('cotizador','CotizacionController@index');
 Route::get('cotizador/create',[
     'as'=>'cotizador.create',
     'uses'=> 'CotizacionController@create']);
+/* ruta de editar cotizacion */
+
+Route::get('cotizador/{id}/edit',[
+    'as'=>'cotizador.edit',
+    'uses'=> 'CotizacionController@edit']);
+/* delete ruta */
+Route::delete('cotizador/destroy/{id}',[
+    'as'=>'cotizador.destroy',
+    'uses'=> 'CotizacionController@destroy']);
 
 Route::post('cotizador/add',[
     'as'=>'cotizador.add',
@@ -155,7 +164,12 @@ Route::post('/cotizador/email_pdf/{id}',[
     'as' =>'cotizador.email_pdf',
     'uses'=>'CotizacionController@email_pdf'
     ]);
+/* ==========================================EDIT=========== */
 
+Route::post('cotizador/add_cliente_edit/{id}',[
+    'as'=>'cotizador.add',
+    'uses'=>'CotizacionController@add_cliente_edit'
+    ]);
     /* destroy_tmp_syscom */
 /* Route::get('/cotizador/generar',[
     'as'=>'cotizador.generar',

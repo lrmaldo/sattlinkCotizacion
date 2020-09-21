@@ -58,18 +58,19 @@
                                 aria-hidden="true"></i></button>
                               
                                 {{-- editar --}}
-                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                            data-target="#"><i class="fa fa-edit"
-                                aria-hidden="true"></i></button>
+                        <a href="{{route('cotizador.edit',$item->id)}}" type="button" class="btn btn-primary btn-sm" 
+                            ><i class="fa fa-edit"
+                                aria-hidden="true"></i></a>
                                 {{-- eliminar --}}
                         <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
-                            data-target="#" ><i class="fa fa-trash"aria-hidden="true"></i></button>
+                            data-target="#modal_eliminar{{$item->id}}" ><i class="fa fa-trash"aria-hidden="true"></i></button>
                         </td>
                       
 
 
                         </tr>
                        @include('cotizador.modal.modal_enviar_correo')
+                       @include('cotizador.modal.modal_eliminar')
                     @endforeach
                 </tbody>
             </table>

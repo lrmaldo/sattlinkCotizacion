@@ -24,7 +24,7 @@ class CreateDetalleCotizacionSyscomsTable extends Migration
             $table->string('unidad_syscom')->nullable();
             $table->text('titulo_syscom')->nullable();
             $table->integer('id_cotizacion')->unsigned()->nullable(); /* foreign key detalle cotizacion */
-            $table->foreign('id_cotizacion')->references('id')->on('cotizaciones')->onDelete('set null');
+            $table->foreign('id_cotizacion')->references('id')->on('cotizaciones')->onDelete('cascade');/* set null */
             $table->timestamps();
         });
     }

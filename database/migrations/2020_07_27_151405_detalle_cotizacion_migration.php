@@ -20,7 +20,8 @@ class DetalleCotizacionMigration extends Migration
             $table->integer('cantidad');
             $table->float('precio',10,2);
             $table->integer('id_producto')->unsigned()->nullable();
-            $table->foreign('id_producto')->references('id')->on('productos')->onDelete('set null'); 
+            $table->foreign('id_producto')->references('id')->on('productos')->onDelete('cascade'); 
+            /* set null */
             
             $table->timestamps();  
         });

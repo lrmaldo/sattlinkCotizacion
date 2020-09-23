@@ -265,8 +265,8 @@ class CotizacionController extends Controller
                 <td style='text-align: center'>" . $producto_syscom->tmp_unidad_syscom . "</td>
                 <td style='text-align: center'>" . $producto_syscom->tmp_cantidad_syscom . "</td>
                 <td>*" . $producto_syscom->tmp_titulo_syscom . "</td>
-                <td style='text-align: center'>$" . number_format(($producto_syscom->tmp_precio_syscom / ($iva + 1)), 2) . "</td>
-                <td style='text-align: center'>$" . number_format(($total_precio_cantidad / ($iva + 1)), 2) . "</td>
+                <td style='text-align: center'>$" . number_format(($producto_syscom->tmp_precio_syscom ), 2) . "</td>
+                <td style='text-align: center'>$" . number_format(($total_precio_cantidad), 2) . "</td>
                 
                 <td>
                 <input type='hidden' id='id_eliminar_syscom' name='id_eliminar_syscom' value='$producto_syscom->tmp_id_producto_syscom' />
@@ -276,7 +276,7 @@ class CotizacionController extends Controller
             }
         }
         /*  ************************fin de agregacion de productos syscom */
-        $importe = ($sumador_total / ($iva + 1));
+        $importe = $sumador_total ;//suma de todo los productos que estan en el cotizador sin iba
         $datos = $datos . "<tr>
     <td colspan=4><span class='float-right'>IMPORTE TOTAL </span></td>
     <td style='text-align: center'><span >$" . number_format($importe, 2) . "</span></td>
@@ -330,9 +330,9 @@ class CotizacionController extends Controller
         if ($request->id_producto_syscom == $actualizacion['tmp_id_producto_syscom']) {
 
             $conversion = ($request->precio_syscom * $tipo_cambio);/* conversion e impuesto */
-            $precio_iva = $conversion + ($conversion * ($impuesto / 100));
+            //$precio_iva = $conversion + ($conversion * ($impuesto / 100));
             /* ============================================================== */
-            $precio_con_utilidad = ($precio_iva + ($precio_iva * ($utilidad / 100))) * 1.082;
+            $precio_con_utilidad = ($conversion + ($conversion * ($utilidad / 100))) * 1.082;
             /* $precio_con_utilidad = $precio_iva + ($precio_iva *($utilidad/100)); */  /* formula de utilidad  */
             /* ============================================================  */
             /* var precio_con_iva = conversion + (conversion*0.16); */
@@ -348,7 +348,7 @@ class CotizacionController extends Controller
             $conversion = ($request->precio_syscom * $tipo_cambio);/* conversion e impuesto */
             $precio_iva = $conversion + ($conversion * ($impuesto / 100));
             /* ============================================================== */
-            $precio_con_utilidad = ($precio_iva + ($precio_iva * ($utilidad / 100))) * 1.082;  /* formula de utilidad  */
+            $precio_con_utilidad = ($conversion + ($conversion * ($utilidad / 100))) * 1.082; /* formula de utilidad  */
             /* ============================================================  */
             $tmp = new tmp_cotizacion_syscom();
             $tmp->tmp_cantidad_syscom = $request->cantidad;
@@ -507,14 +507,12 @@ class CotizacionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    { 
+    {
         $cotizacion = cotizaciones::find($id);
         $productos = productos::all();
         $clientes = clientes::all();
 
-        return view('cotizador.edit',compact('cotizacion','productos','clientes'));
-
-
+        return view('cotizador.edit', compact('cotizacion', 'productos', 'clientes'));
     }
 
     /**
@@ -529,8 +527,7 @@ class CotizacionController extends Controller
         $cotizacion = cotizaciones::find($id);
 
 
-        return view('cotizacion.edit',compact('cotizacion'));/* debe de ir a la vista de cotizacion */
-        
+        return view('cotizacion.edit', compact('cotizacion'));/* debe de ir a la vista de cotizacion */
     }
 
     /**
@@ -800,8 +797,8 @@ class CotizacionController extends Controller
             $pdf =  PDF::loadView('pdf.factura', $data)
                 ->setPaper('letter', 'portrait');
 
-            Mail::send('email.enviar_pdf', $datos, function ($mail) use ($pdf, $asunto, $email_cliente,$folio) {
-                $mail->attachData($pdf->output(), 'cotizacion-folio-'.$folio.'.pdf');
+            Mail::send('email.enviar_pdf', $datos, function ($mail) use ($pdf, $asunto, $email_cliente, $folio) {
+                $mail->attachData($pdf->output(), 'cotizacion-folio-' . $folio . '.pdf');
                 $mail->from('info@sattlink', 'Soporte Sattlink');
                 $mail->subject($asunto);
                 $mail->to($email_cliente);
@@ -818,42 +815,42 @@ class CotizacionController extends Controller
         }); */
     }
 
-/* ======================================================================== */
+    /* ======================================================================== */
     /* add_cliente en el modulo de editar cotizacion */
 
-     /*  esta funcion es cuando se selecciona el cliente  y muestra la tabla  */
-     public function add_cliente_edit(Request $request, $id)
-     {
-         $impuesto = impuestos::where('id', 1)->first();
-         $iva = ($impuesto->cantidad) / 100; //impuesto del 16 %
-         $descuento_cliente = ((int) $request->descuento_cliente) / 100;
- 
+    /*  esta funcion es cuando se selecciona el cliente  y muestra la tabla  */
+    public function add_cliente_edit(Request $request, $id)
+    {
+        $impuesto = impuestos::where('id', 1)->first();
+        $iva = ($impuesto->cantidad) / 100; //impuesto del 16 %
+        $descuento_cliente = ((int) $request->descuento_cliente) / 100;
+
         $cotizacion_edit = cotizaciones::find($id);
- 
-         //actualizar precios en la tabla temporal de detalle cotizaciones 
-         $actualizacion = detalle_cotizacion::all();
- 
-         foreach ($actualizacion as $update) {
-             $producto = productos::where('id', $update->id_producto)->first();
-             detalle_cotizacion::where('id_producto', $producto->id)
-                 ->update(['precio' => $producto->precio]);
-         }
-         //fin de actualizacion de precios
- 
-         $datos = "";
- 
- 
- 
-         $fortmp = detalle_cotizacion::where('id_cotizacion',$id)->get();
-         $sumador_total = 0;
-         if($fortmp){
+
+        //actualizar precios en la tabla temporal de detalle cotizaciones 
+        $actualizacion = detalle_cotizacion::all();
+
+        foreach ($actualizacion as $update) {
+            $producto = productos::where('id', $update->id_producto)->first();
+            detalle_cotizacion::where('id_producto', $producto->id)
+                ->update(['precio' => $producto->precio]);
+        }
+        //fin de actualizacion de precios
+
+        $datos = "";
+
+
+
+        $fortmp = detalle_cotizacion::where('id_cotizacion', $id)->get();
+        $sumador_total = 0;
+        if ($fortmp) {
             foreach ($fortmp as $item) {
- 
-                $prod = productos::where('id',"=", $item->id_producto)->first();
-    
+
+                $prod = productos::where('id', "=", $item->id_producto)->first();
+
                 $preciototal = $item->precio * $item->cantidad;
                 $sumador_total += $preciototal; //sumador de totales
-    
+
                 $datos = $datos . "<tr>
             <td style='text-align: center'>" . $prod->unidad . "</td>
             <td style='text-align: center'>" . $item->cantidad . "</td>
@@ -867,15 +864,15 @@ class CotizacionController extends Controller
             </td>                 
         </tr>";
             }
-         }
-         
- 
-        
-             $syscom =  detalle_cotizacion_syscom::where('id_cotizacion', $id)->get();
-             foreach ($syscom as $producto_syscom) {
-                 $sumador_total += ($producto_syscom->precio * $producto_syscom->cantidad);
-                 $total_precio_cantidad = $producto_syscom->precio * $producto_syscom->cantidad;
-                 $datos = $datos . "<tr>
+        }
+
+
+
+        $syscom =  detalle_cotizacion_syscom::where('id_cotizacion', $id)->get();
+        foreach ($syscom as $producto_syscom) {
+            $sumador_total += ($producto_syscom->precio * $producto_syscom->cantidad);
+            $total_precio_cantidad = $producto_syscom->precio * $producto_syscom->cantidad;
+            $datos = $datos . "<tr>
                  <td style='text-align: center'>" . $producto_syscom->unidad_syscom . "</td>
                  <td style='text-align: center'>" . $producto_syscom->cantidad . "</td>
                  <td>*" . $producto_syscom->titulo_syscom . "</td>
@@ -888,48 +885,232 @@ class CotizacionController extends Controller
                  <button type='button' class='btn btn-danger' onclick='eliminar_syscom()' value='$producto_syscom->id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
                  </td>                 
              </tr>";
-             }
-         
-         /*  ************************fin de agregacion de productos syscom */
-         $importe = $sumador_total ;
-         $datos = $datos . "<tr>
+        }
+
+        /*  ************************fin de agregacion de productos syscom */
+        $importe = $sumador_total;
+        $datos = $datos . "<tr>
      <td colspan=4><span class='float-right'>IMPORTE TOTAL </span></td>
      <td style='text-align: center'><span >$" . number_format($importe, 2) . "</span></td>
     
      </tr>";
-         $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
-         /* calcular el descuento si hay */
- 
-         $descuento = bcdiv(($importe * $descuento_cliente), '1', '2');
-         $datos = $datos . "<tr>
+      
+
+        $descuento = bcdiv(($importe * $descuento_cliente), '1', '2');
+        $datos = $datos . "<tr>
  <td colspan=4><span class='float-right'>Descuento %</span></td>
  <td style='text-align: center'><span >$" . $descuento . "</span></td>
  </tr>";
-         /* IMPORTE MENOS EL DESCUENTO */
- 
-         $subtotal = $importe - $descuento;
-         $datos = $datos . "<tr>
+        /* IMPORTE MENOS EL DESCUENTO */
+
+        $subtotal = $importe - $descuento;
+        $datos = $datos . "<tr>
  <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
  <td style='text-align: center'><span >$" . number_format($subtotal, 2) . "</span></td>
  
  </tr>";
-         /* el iva del total  */
-         $impuestoIVA = $subtotal * $iva;
-         $datos = $datos . "<tr>
+        /* el iva del total  */
+        $impuestoIVA = $subtotal * $iva;
+        $datos = $datos . "<tr>
  <td colspan=4><span class='float-right'>I.V.A.</span></td>
  <td style='text-align: center'><span >$" . number_format($impuestoIVA, 2) . "</span></td>
  
  </tr>";
- 
- 
-         $total = $subtotal + $impuestoIVA;
-         $datos = $datos . "<tr>
+
+
+        $total = $subtotal + $impuestoIVA;
+        $datos = $datos . "<tr>
      <td colspan=4><span class='float-right'>TOTAL </span></td>
      <td style='text-align: center'><span >$" . number_format($total, 2) . "</span></td>
      
      </tr>";
+
+        //return  var_dump($request->all());
+        return $datos;
+    }
+
+
+    /* ===== editar producto del servidor */
+
+    public function edit_producto(Request $request, $id)
+    {
+        $impuesto = impuestos::where('id', 1)->first();
+        $iva = ($impuesto->cantidad) / 100; //impuesto del 16 %
+        $descuento_cliente = ((int) $request->descuento_cliente) / 100;
+        session_start();
+        $session_id = Auth::user()->id;
+
+
+
+        //cambiar por un like
+        $producto = productos::where("id", '=', $request->id_producto)->first();
+
+        $exite_prod = detalle_cotizacion::where('id_cotizacion', $id)->first();
+        if ($exite_prod) {
+            $cantidadpre = detalle_cotizacion::find($exite_prod->id);
+            $cantidadpre->cantidad = $request->cantidad;
+            $cantidadpre->save();
+        } else {
+
+
+            $tmp = new detalle_cotizacion();
+            $tmp->cantidad = $request->cantidad;
+            $tmp->precio = $producto->precio;
+            $tmp->id_producto = $producto->id;
+           
+            $tmp->id_cotizacion = $id;
+
+            $tmp->save();
+        }
+
+
+        //actualizar precios en la tabla temporal de detalle cotizaciones 
+        $actualizacion = detalle_cotizacion::all();
+
+        foreach ($actualizacion as $update) {
+            if ($update->id_producto) {
+
+                $producto = productos::where('id', $update->id_producto)->first();
+                detalle_cotizacion::where('id_producto', $producto->id)
+                    ->update(['precio' => $producto->precio,]);
+            }
+        }
+        //fin de actualizacion de precios
+
+        //actualizar cantidad 
+        /*  $updat_catidad =tmp_detalle_cotizacion::where('tmp_id_producto',$request->id_producto)
+        ->update(['tmp_cantidad'])  */
+
+        $datos = "";
+
+        $fortmp = detalle_cotizacion::where('id_cotizacion',$id)->get();
+        $sumador_total = 0;
+        foreach ($fortmp as $item) {
+            $prod = productos::where('id', $item->id_producto)->first();
+
+            $preciototal = $item->precio * $item->cantidad;
+            $sumador_total += $preciototal; //sumador de totales
+
+            $datos = $datos . "<tr>
+            <td style='text-align: center'>" . $prod->unidad . "</td>
+            <td style='text-align: center'>" . $item->cantidad . "</td>
+            <td>" . $prod->nombre . "</td>
+            <td style='text-align: center'>$" . number_format(($item->precio / ($iva + 1)), 2) . "</td>
+            <td style='text-align: center'>$" . number_format((($item->precio / ($iva + 1)) * $item->cantidad), 2) . "</td>
+            
+            <td>
+            <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
+        <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$item->id' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+            </td>                 
+        </tr>";
+        }
+
+        /* agregar syscom si es que hay */
+        $syscom =  detalle_cotizacion_syscom::where('id_cotizacion', $id)->get();
+        foreach ($syscom as $producto_syscom) {
+            $sumador_total += ($producto_syscom->precio * $producto_syscom->cantidad);
+            $total_precio_cantidad = $producto_syscom->precio * $producto_syscom->cantidad;
+            $datos = $datos . "<tr>
+                 <td style='text-align: center'>" . $producto_syscom->unidad_syscom . "</td>
+                 <td style='text-align: center'>" . $producto_syscom->cantidad . "</td>
+                 <td>*" . $producto_syscom->titulo_syscom . "</td>
+                 <td style='text-align: center'>$" . number_format(($producto_syscom->precio), 2) . "</td>
+                 <td style='text-align: center'>$" . number_format(($total_precio_cantidad), 2) . "</td>
+                 
+                 
+                 <td>
+                 <input type='hidden' id='id_eliminar_syscom' name='id_eliminar_syscom' value='$producto_syscom->id_producto_syscom' />
+                 <button type='button' class='btn btn-danger' onclick='eliminar_syscom()' value='$producto_syscom->id_syscom' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+                 </td>                 
+             </tr>";
+        }
+
+        /*  ************************fin de agregacion de productos syscom */
+        $importe = $sumador_total;
+        $datos = $datos . "<tr>
+     <td colspan=4><span class='float-right'>IMPORTE TOTAL </span></td>
+     <td style='text-align: center'><span >$" . number_format($importe, 2) . "</span></td>
+    
+     </tr>";
+        $total_con_iva = $sumador_total - ($sumador_total / ($iva + 1)); //calcula el iva del total neto mes el
+        /* calcular el descuento si hay */
+
+        $descuento = bcdiv(($importe * $descuento_cliente), '1', '2');
+        $datos = $datos . "<tr>
+ <td colspan=4><span class='float-right'>Descuento %</span></td>
+ <td style='text-align: center'><span >$" . $descuento . "</span></td>
+ </tr>";
+        /* IMPORTE MENOS EL DESCUENTO */
+
+        $subtotal = $importe - $descuento;
+        $datos = $datos . "<tr>
+ <td colspan=4><span class='float-right'>SUB-TOTAL </span></td>
+ <td style='text-align: center'><span >$" . number_format($subtotal, 2) . "</span></td>
  
-         //return  var_dump($request->all());
-         return $datos;
-     }
+ </tr>";
+        /* el iva del total  */
+        $impuestoIVA = $subtotal * $iva;
+        $datos = $datos . "<tr>
+ <td colspan=4><span class='float-right'>I.V.A.</span></td>
+ <td style='text-align: center'><span >$" . number_format($impuestoIVA, 2) . "</span></td>
+ 
+ </tr>";
+
+
+        $total = $subtotal + $impuestoIVA;
+        $datos = $datos . "<tr>
+     <td colspan=4><span class='float-right'>TOTAL </span></td>
+     <td style='text-align: center'><span >$" . number_format($total, 2) . "</span></td>
+     
+     </tr>";
+
+        //return  var_dump($request->all());
+        return $datos;
+    }
+
+
+    public function edit_syscom(Request $request, $id)
+    {
+
+        /* exite producto actualizar cantidad y precio */
+        // $exite_producto  = tmp_cotizacion_syscom::all();
+       
+        $tipo_cambio = impuestos::find(1)->tipo_cambio_syscom;
+        $utilidad = impuestos::find(1)->utilidad;
+        $actualizacion =  detalle_cotizacion_syscom::where('id_cotizacion', $id)->where('id_producto_syscom',$request->id_producto_syscom)->first();
+        if ($request->id_producto_syscom == $actualizacion['id_producto_syscom']) {
+
+            $conversion = ($request->precio_syscom * $tipo_cambio);/* conversion e impuesto */
+           
+            /* ============================================================== */
+            $precio_con_utilidad = ($conversion + ($conversion * ($utilidad / 100))) * 1.082;
+            /* $precio_con_utilidad = $precio_iva + ($precio_iva *($utilidad/100)); */  /* formula de utilidad  */
+            /* ============================================================  */
+            /* var precio_con_iva = conversion + (conversion*0.16); */
+            detalle_cotizacion_syscom::where('id_producto_syscom', $request->id_producto_syscom)
+                ->update([
+                    'cantidad' => $request->cantidad,
+                    'precio' => $precio_con_utilidad,
+                    'precio_dolar' => $request->precio_syscom
+                ]);
+        } else {
+            $session_id = Auth::user()->id;
+
+            $conversion = ($request->precio_syscom * $tipo_cambio);/* conversion e impuesto */
+            
+            /* ============================================================== */
+            $precio_con_utilidad = ($conversion + ($conversion * ($utilidad / 100))) * 1.082;
+            /* ============================================================  */
+            $tmp = new detalle_cotizacion_syscom();
+            $tmp->cantidad = $request->cantidad;
+            $tmp->precio = $precio_con_utilidad;
+            $tmp->precio_dolar = $request->precio_syscom;
+            $tmp->id_producto_syscom = $request->id_producto_syscom;
+            $tmp->session_id = $session_id;
+            $tmp->id_cotizacion = $id;
+            $tmp->titulo_syscom = $request->titulo_syscom;
+            $tmp->unidad_syscom = $request->unidad_syscom;
+            $tmp->save();
+        }
+    }
 }

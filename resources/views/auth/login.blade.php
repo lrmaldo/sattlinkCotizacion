@@ -91,21 +91,21 @@
 </head>
 
 <body>
-    <div id="layoutAuthentication" style="background-color: darkorange">
+    <div id="layoutAuthentication" class="div">
         <div id="layoutAuthentication_content">
             <main>
                 <div class="container">
-                    <div class="row justify-content-center">
+                    <div class="row justify-content-center"  >
                         <div class="col-lg-5">
-                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5" style="background-color: rgba(0,0,0,0.6);">
                                 <div class="card-header">
-                                    <h3 class="text-center font-weight-light my-4">Login</h3>
+                                    <h3 class="text-center font-weight-light my-4 text-white">Login</h3>
                                 </div>
                                 <div class="card-body">
                                     <form method="POST" action="{{ route('login') }}">
                                         {{ csrf_field() }}
                                         <div class="form-group {{ $errors->has('email') ? ' has-error' : '' }}">
-                                            <label class="small mb-1" for="inputEmailAddress">Correo Electrónico</label>
+                                            <label class="small mb-1 text-white" for="inputEmailAddress">Correo Electrónico</label>
                                             <input class="form-control py-4" id="email" name="email"
                                                 value="{{ old('email') }}" type="email"
                                                 placeholder="Ingresa el correo electrónico" required autofocus />
@@ -116,7 +116,7 @@
                                             @endif
                                         </div>
                                         <div class="form-group">
-                                            <label class="small mb-1" for="inputPassword">Contraseña</label>
+                                            <label class="small mb-1 text-white" for="inputPassword">Contraseña</label>
                                             <input class="form-control py-4" id="password" name="password"
                                                 type="password" placeholder="Escribe tu contraseña" required />
 
@@ -140,7 +140,7 @@
                                         </div> --}}
                                         <div
                                             class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
-                                            <a class="small" href="{{ route('password.request') }}">¿Olvidades tu
+                                            <a class="small text-white" href="{{ route('password.request') }}">¿Olvidades tu
                                                 contraseña?</a>
                                             {{-- <a class="btn btn-primary" href="index.html">Login</a> --}}
                                             <button type="submit" class="btn btn-primary">
@@ -179,7 +179,60 @@
     </script>
     <script src="js/scripts.js"></script>
 </body>
+<style>
+    .div{
+  height:100%;
+  width: 100%;
+ 
+  position: fixed;
+  /* background-image: url("img/torres/2.jpg"); */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover;
+ 
+}
 
+
+      .custom-margin {
+         margin-top: 20vh;
+      }
+.login{
+    /*background-color:rgb(255,0,0);*/
+    opacity:0.6; /* Opacidad 60% */
+}
+</style>
+<script>
+
+    
+$(document).ready(function(){
+    function random(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    var spec = {
+        backgrounds: [
+           '1.jpg',
+           '2.jpg',
+           '3.jpg',
+           '4.jpg',
+           '5.jpg',
+           '6.jpg',
+         
+        ]
+    };
+    var i = random(0, spec.backgrounds.length - 1);
+    var b = spec.backgrounds[i];
+    /* 
+    background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; */
+    $('body').css('background-image', 'url("img/torres/' + b + '")');
+    $('body').css('background-size','cover');
+    $('body').css('background-position','center');
+    $('body').css('background-repeat','no-repeat');
+
+});
+</script>
 </html>
 
 {{-- @endsection

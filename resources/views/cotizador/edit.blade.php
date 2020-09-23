@@ -267,6 +267,8 @@
         /* iniciar el ckeditor.js */
         initSample();
         const clientes = {!!$clientes!!};//clientes 
+        const  id_cotizacion = {!!$cotizacion->id!!};//obtener id de la cotizacion
+
         /* fin del ckeditor */
         $(document).ready(function(){
             select()/* inicia el cotizador si es que hay productos agregados */
@@ -352,7 +354,7 @@
             var token = '{{ csrf_token() }}'; // ó $("#token").val() si lo tienes en una etiqueta html.
             //var id_producto;
             var cantidad = $("#cantidad_producto").val();
-            var id_cotizacion = {!!$cotizacion->id!!};
+           /*  var id_cotizacion = {!!$cotizacion->id!!}; */
             var quitarp = document.getElementById('descuentoCliente').innerHTML;
             var descuentoC = quitarp.replace('%', ''); //le quita el simbolo porcentaje
            
@@ -388,6 +390,7 @@
             var cantidad = document.getElementById("cantidad-"+id).value; /* obtienen el valor del input de la tabla de productos */
           
             var id_producto = id; ///obtiene el id de producto
+           
             console.log(id)
             var quitarp = document.getElementById('descuentoCliente').innerHTML; //obtiene el descuento del cliente
             var descuentoC = quitarp.replace('%', ''); // le quita el signo de porcentaje
@@ -416,7 +419,7 @@
             $.ajax({
 
                 type: 'post',
-                url: '/cotizador/add',
+                url: '/cotizador/edit_producto/'+id_cotizacion,
                 data: data,
                 success: function(datos) {
                     document.getElementById('resultado').innerHTML = datos;
@@ -555,5 +558,5 @@
 
        
     </script>
-    <script src="{{asset('js/modulosyscom/syscom.js')}}"></script>
+    <script src="{{asset('js/modulosyscom/syscom_edit.js')}}"></script>
 @endsection

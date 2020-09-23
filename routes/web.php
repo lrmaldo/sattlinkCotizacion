@@ -170,11 +170,17 @@ Route::post('cotizador/add_cliente_edit/{id}',[
     'as'=>'cotizador.add',
     'uses'=>'CotizacionController@add_cliente_edit'
     ]);
-    /* destroy_tmp_syscom */
-/* Route::get('/cotizador/generar',[
-    'as'=>'cotizador.generar',
-    'uses'=>'CotizacionController@guardarCoti'  
-]); */
+
+Route::post('cotizador/edit_producto/{id}',[
+    'as'=>'cotizador.edit_producto',
+    'uses'=>'CotizacionController@edit_producto'
+]);
+/* editar producto syscom */
+Route::post('cotizador/edit_syscom/{id}',[
+    'as'=>'cotizador.edit_syscom',
+    'uses'=>'CotizacionController@edit_syscom'
+]);
+
 
 Route::get('cotizador/generar','CotizacionController@guardarCoti');
 

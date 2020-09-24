@@ -449,15 +449,17 @@
             var data = {
                 _token: token,
                 descuento_cliente: descuentoC,
-                id: id
+                id: id,
+                id_cotizacion: id_cotizacion
             };
             $.ajax({
 
                 type: 'post',
-                url: '/cotizador/destroy_tmp',
+                url: '/cotizador/destroy_producto',
                 data: data,
                 success: function(datos) {
-                    document.getElementById('resultado').innerHTML = datos;
+                  /*   document.getElementById('resultado').innerHTML = datos; */
+                  select();
                     //$('#resultado').html(datos);
                 }
             })
@@ -517,11 +519,12 @@
                 vendedor: vendedor,
                 folio:folio,
                 observaciones: observaciones
+
             }
             $.ajax({
 
             type: 'get',
-            url: '/cotizador/generar',
+            url: '/cotizador/guardar/'+id_cotizacion,
             data: data,
             success: function(datos) {
                // document.getElementById('resultado').innerHTML = datos;

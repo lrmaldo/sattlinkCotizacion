@@ -29,6 +29,24 @@ class UserTableSeeder extends Seeder
         $user->save();
         $user->roles()->attach($role_admin);
 
+        /* user admin rafa */
+     
+        $user = new User();
+        $user->name = 'Ing Rafael Núñez';
+        $user->email = 'rafael.nunez@sattlink.com';
+        $user->password = bcrypt('secret');
+        $user->save();
+        $user->roles()->attach($role_admin);
+
+        /* user admin marcelo */
+        $user = new User();
+        $user->name = 'Lic. Marcelo Rodriguez';
+        $user->email = 'marcelo.rodriguez@sattlink.com';
+        $user->password = bcrypt('secret');
+        $user->save();
+        $user->roles()->attach($role_admin);
+
+
         $impuesto = new impuestos();
         $impuesto->cantidad = 16 ;
        // $impuesto->tipo_cambio_syscom = 20;

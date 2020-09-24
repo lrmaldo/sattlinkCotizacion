@@ -361,10 +361,9 @@ class CotizacionController extends Controller
             $tmp->save();
         }
     }
-    /* function de cargar datos de los productos cotizados se envian a la funcion cargardatos desde ajax */
+  
 
-    public function cargardatos(Request $request)
-    { }
+    
 
 
     public function guardarCoti(Request $request)
@@ -374,6 +373,7 @@ class CotizacionController extends Controller
         $tmp = tmp_detalle_cotizacion::where('session_id', Auth::user()->id)->get();
         //guardar los productos  cotizados
         $user = User::where('name', 'like', '%' . $request->vendedor . '%')->first();
+        /* guarda los datos para un nueva cotizacion */
         $cotizacion = new cotizaciones();
         $cotizacion->folio = $request->folio;
         $cotizacion->forma = 'null';
@@ -418,10 +418,14 @@ class CotizacionController extends Controller
             //$detalle_cotizacion_syscom->
 
         }
+
+        /* ============== iva  */
+      
         //$cotizacion->total= $sumador_total;}
         $Cliente = clientes::where('id', $request->id_cliente)->first();
         $descuentoCliente = $Cliente->descuento / 100;
-        $totalcondescuento = $sumador_total - ($sumador_total * $descuentoCliente);
+      
+        $totalcondescuento = ($sumador_total - ($sumador_total * $descuentoCliente));
         $cotizacion->total = $totalcondescuento;
         $cotizacion->descuento = $sumador_total * $descuentoCliente;
         $cotizacion->save();
@@ -1112,5 +1116,83 @@ class CotizacionController extends Controller
             $tmp->unidad_syscom = $request->unidad_syscom;
             $tmp->save();
         }
+    }
+
+    public function destroy_syscom(Request $request)
+    {
+        detalle_cotizacion_syscom::where('id_producto_syscom','=', $request->id)
+                        ->where('id_cotizacion','=',$request->id_cotizacion)->delete();
+                        return "se elimino producto";
+        
+        
+    }
+    public function destroy_producto(Request $request)
+    {
+        /* return $request->all(); */
+        $elimino =detalle_cotizacion::where('id','=', $request->id)
+                        ->where('id_cotizacion','=',$request->id_cotizacion)->delete();
+                        return $elimino;
+        
+        
+    }
+
+
+    /* guardar la edicion de  la cotizacion */
+    public function guardar_edit_cotizacion(Request $request,$id)
+    {
+       
+        $tmp = detalle_cotizacion::where('id', $id)->get();
+        //guardar los productos  cotizados
+       
+        /* guarda los datos para un nueva cotizacion */
+        $cotizacion =  cotizaciones::find($id);
+        //$cotizacion->folio = $request->folio;
+        $cotizacion->forma = 'null';
+        $cotizacion->id_datosfiscales = $request->id_datosfiscales;
+        $cotizacion->descuento = "0";
+        $cotizacion->id_cliente = $request->id_cliente;
+        //$cotizacion->id_vendedor = $user->id;
+        $cotizacion->comentario = $request->observaciones;
+        $cotizacion->save();
+        $sumador_total = 0;
+
+        foreach ($tmp as $item) {
+
+            $preciototal = $item->tmp_precio * $item->tmp_cantidad;//********************************* */
+            $sumador_total += $preciototal; //sumador de totales
+
+
+        }
+        if (detalle_cotizacion_syscom::where('id_cotizacion','=', $id)) {
+            $syscom = detalle_cotizacion_syscom::where('id_cotizacion','=', $id)->get();
+            foreach ($syscom as $tmp_syscom) {
+                $sumador_total += $tmp_syscom->precio * $tmp_syscom->cantidad;/* suma de productos su existe en syscom */
+            }
+            //$detalle_cotizacion_syscom->
+
+        }
+
+       
+        $Cliente = clientes::where('id', $request->id_cliente)->first();
+        $descuentoCliente = $Cliente->descuento / 100;
+      
+        $totalcondescuento = ($sumador_total - ($sumador_total * $descuentoCliente));
+        $cotizacion->total = $totalcondescuento;
+        $cotizacion->descuento = $sumador_total * $descuentoCliente;
+        $cotizacion->save();
+
+      /*   tmp_detalle_cotizacion::where('session_id', Auth::user()->id)->delete();
+        if (tmp_cotizacion_syscom::where('session_id', Auth::user()->id)) {
+            tmp_cotizacion_syscom::where('session_id', Auth::user()->id)->delete();
+        } */
+
+        return $cotizacion->id;
+
+        //fin de los productoss cotizados
+
+        /*    'id', 'folio', 'forma', 'comentario', 'id_datosfiscales',
+        'descuento','total','id_vendedor',
+        'id_cliente',
+        'id_detalle_cotizacion'  */
     }
 }

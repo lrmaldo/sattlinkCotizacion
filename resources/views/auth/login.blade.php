@@ -80,6 +80,7 @@
     <meta name="author" content="Ing. Leonardo Maldonado López" />
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/x-icon" href="img/icon.ico" />
 
     <title>SattLink</title>
 
@@ -158,15 +159,15 @@
                 </div>
             </main>
         </div>
-        <div id="layoutAuthentication_footer">
-            <footer class="py-4 bg-light mt-auto">
+        <div id="layoutAuthentication_footer" >
+            <footer class="py-4  mt-auto" style="background-color: rgba(0,0,0,0.4);">
                 <div class="container-fluid">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Sattlink <script> document.write(new Date().getFullYear());</script>  </div>
+                    <div class="d-flex align-items-center justify-content-between small text-white">
+                        <div class="text-white" >Copyright &copy; Sattlink <script> document.write(new Date().getFullYear());</script>  </div>
                         <div>
-                            <a href="#">Políticas de privacidad</a>
+                            <a style="color:white;" href="{{URL::to('politica')}}">Políticas de privacidad</a>
                             &middot;
-                            <a href="#">Terminos &amp; Condiciones</a>
+                            <a style="color:white;" href="{{URL::to('terminos')}}">Terminos &amp; Condiciones</a>
                         </div>
                     </div>
                 </div>

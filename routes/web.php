@@ -180,8 +180,23 @@ Route::post('cotizador/edit_syscom/{id}',[
     'as'=>'cotizador.edit_syscom',
     'uses'=>'CotizacionController@edit_syscom'
 ]);
+/* eliminar producto syscom */
+Route::post('/cotizador/destroy_syscom',[
+    'as' =>'cotizador.destroy_syscom',
+    'uses'=>'CotizacionController@destroy_syscom'
+    ]);
+
+Route::post('/cotizador/destroy_producto',[
+    'as' =>'cotizador.destroy_producto',
+    'uses'=>'CotizacionController@destroy_producto'
+    ]);
+
+Route::get('cotizador/guardar/{id}','CotizacionController@guardar_edit_cotizacion');
 
 
+/* ==================fin de rutas de modulo editar ================== */
+
+/* guardar cotizacion */
 Route::get('cotizador/generar','CotizacionController@guardarCoti');
 
 /* cargar datos productos internos y syscom cotizados */
@@ -196,3 +211,11 @@ Route::get('cotizador/autocomplete',[
 
 //generador de pdf con id de cotizacion
 Route::get('/pdf/{id}','CotizacionController@generadorPdf');
+
+
+Route::get('politica', function () {
+    return view('politicas');
+});
+Route::get('terminos', function () {
+    return view('terminos');
+});

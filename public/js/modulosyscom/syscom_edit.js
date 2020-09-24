@@ -247,15 +247,17 @@ $("#outer_div").empty();
              var data = {
                  _token: token,
                 
-                 id: id
+                 id: id,
+                 id_cotizacion: id_cotizacion
              };
              $.ajax({
  
                  type: 'post',
-                 url: '/cotizador/destroy_tmp_syscom',
+                 url: '/cotizador/destroy_syscom',
                  data: data,
                  success: function(datos) {
-                     document.getElementById('resultado').innerHTML = datos;
+                     //document.getElementById('resultado').innerHTML = datos;
+                     select();
                      //$('#resultado').html(datos);
                  }
              })

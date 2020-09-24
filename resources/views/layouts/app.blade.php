@@ -6,11 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
+    <meta name="description" content="Cotizador - Sattlink" />
     <meta name="author" content="Ing. Leonardo Maldonado López" />
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="_token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/x-icon" href="img/icon.ico" />
 
     <title>Sattlink - Cotización</title>
 
@@ -40,7 +41,7 @@
 </head>
 
 <body class="sb-nav-fixed">
-    <nav class="sb-topnav navbar navbar-expand navbar-dark" style="background-color: darkorange">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark" style="background-color: #ff5709ee">
         <a class="navbar-brand" href="/home">Sattlink</a>
         <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i
                 class="fas fa-bars"></i></button>
@@ -184,9 +185,9 @@
                             </script>
                         </div>
                         <div>
-                            <a href="#">Política de privacidad</a>
+                            <a  href="{{URL::to('politica')}}">Políticas de privacidad</a>
                             &middot;
-                            <a href="#">Terminos &amp; Condiciones</a>
+                            <a  href="{{URL::to('terminos')}}">Terminos &amp; Condiciones</a>
                         </div>
                     </div>
                 </div>

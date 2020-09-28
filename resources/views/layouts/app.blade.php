@@ -88,7 +88,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
-                        <div class="sb-sidenav-menu-heading">Interface</div>
+                       {{--  <div class="sb-sidenav-menu-heading">Interface</div>
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts"
                             aria-expanded="false" aria-controls="collapseLayouts">
                             <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
@@ -101,7 +101,7 @@
                                 <a class="nav-link" href="layout-static.html">Static Navigation</a>
                                 <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
                             </nav>
-                        </div>
+                        </div> --}}
                         {{-- <a class="nav-link collapsed" href="#" data-toggle="collapse"
                             data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>

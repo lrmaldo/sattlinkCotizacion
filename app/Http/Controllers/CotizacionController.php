@@ -136,8 +136,8 @@ class CotizacionController extends Controller
             <td style='text-align: center'>" . $prod->unidad . "</td>
             <td style='text-align: center'>" . $item->tmp_cantidad . "</td>
             <td>" . $prod->nombre . "</td>
-            <td style='text-align: center'>$" . number_format(($item->tmp_precio / ($iva + 1)), 2) . "</td>
-            <td style='text-align: center'>$" . number_format((($item->tmp_precio / ($iva + 1)) * $item->tmp_cantidad), 2) . "</td>
+            <td style='text-align: center'>$" . number_format(($item->tmp_precio ), 2) . "</td>
+            <td style='text-align: center'>$" . number_format((($item->tmp_precio) * $item->tmp_cantidad), 2) . "</td>
             
             <td>
             <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
@@ -246,8 +246,8 @@ class CotizacionController extends Controller
         <td style='text-align: center'>" . $prod->unidad . "</td>
         <td style='text-align: center'>" . $item->tmp_cantidad . "</td>
         <td>" . $prod->nombre . "</td>
-        <td style='text-align: center'>$" . number_format(($item->tmp_precio / ($iva + 1)), 2) . "</td>
-        <td style='text-align: center'>$" . number_format((($item->tmp_precio / ($iva + 1)) * $item->tmp_cantidad), 2) . "</td>
+        <td style='text-align: center'>$" . number_format(($item->tmp_precio ), 2) . "</td>
+        <td style='text-align: center'>$" . number_format((($item->tmp_precio ) * $item->tmp_cantidad), 2) . "</td>
         
         <td>
         <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
@@ -566,8 +566,8 @@ class CotizacionController extends Controller
         <td style='text-align: center'>" . $prod->unidad . "</td>
         <td style='text-align: center'>" . $item->tmp_cantidad . "</td>
         <td>" . $prod->nombre . "</td>
-        <td style='text-align: center'>$" . number_format(($item->tmp_precio / ($iva + 1)), 2) . "</td>
-        <td style='text-align: center'>$" . number_format((($item->tmp_precio / ($iva + 1)) * $item->tmp_cantidad), 2) . "</td>
+        <td style='text-align: center'>$" . number_format(($item->tmp_precio ), 2) . "</td>
+        <td style='text-align: center'>$" . number_format((($item->tmp_precio ) * $item->tmp_cantidad), 2) . "</td>
         
         <td>
         <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
@@ -666,8 +666,8 @@ class CotizacionController extends Controller
         <td style='text-align: center'>" . $prod->unidad . "</td>
         <td style='text-align: center'>" . $item->tmp_cantidad . "</td>
         <td>" . $prod->nombre . "</td>
-        <td style='text-align: center'>$" . number_format(($item->tmp_precio / ($iva + 1)), 2) . "</td>
-        <td style='text-align: center'>$" . number_format((($item->tmp_precio / ($iva + 1)) * $item->tmp_cantidad), 2) . "</td>
+        <td style='text-align: center'>$" . number_format(($item->tmp_precio ), 2) . "</td>
+        <td style='text-align: center'>$" . number_format((($item->tmp_precio ) * $item->tmp_cantidad), 2) . "</td>
         
         <td>
         <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
@@ -859,8 +859,8 @@ class CotizacionController extends Controller
             <td style='text-align: center'>" . $prod->unidad . "</td>
             <td style='text-align: center'>" . $item->cantidad . "</td>
             <td>" . $prod->nombre . "</td>
-            <td style='text-align: center'>$" . number_format(($item->precio / ($iva + 1)), 2) . "</td>
-            <td style='text-align: center'>$" . number_format((($item->precio / ($iva + 1)) * $item->cantidad), 2) . "</td>
+            <td style='text-align: center'>$" . number_format(($item->precio), 2) . "</td>
+            <td style='text-align: center'>$" . number_format((($item->precio) * $item->cantidad), 2) . "</td>
             
             <td>
             <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
@@ -999,8 +999,8 @@ class CotizacionController extends Controller
             <td style='text-align: center'>" . $prod->unidad . "</td>
             <td style='text-align: center'>" . $item->cantidad . "</td>
             <td>" . $prod->nombre . "</td>
-            <td style='text-align: center'>$" . number_format(($item->precio / ($iva + 1)), 2) . "</td>
-            <td style='text-align: center'>$" . number_format((($item->precio / ($iva + 1)) * $item->cantidad), 2) . "</td>
+            <td style='text-align: center'>$" . number_format(($item->precio ), 2) . "</td>
+            <td style='text-align: center'>$" . number_format((($item->precio ) * $item->cantidad), 2) . "</td>
             
             <td>
             <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />

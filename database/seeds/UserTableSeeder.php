@@ -50,7 +50,7 @@ class UserTableSeeder extends Seeder
         $impuesto = new impuestos();
         $impuesto->cantidad = 16 ;
        // $impuesto->tipo_cambio_syscom = 20;
-        $impuesto->utilidad = 30;
+        $impuesto->utilidad = 40;
         $impuesto->save();
     }
 }

@@ -199,8 +199,9 @@
                 <h2>Observaciones:</h2>
                 
 				<div id="editor">
-					<h1>titulo</h1>
-					<p>ejemplo.</p>
+					<p><strong>Antes de realizar un pago o deposito verifique el estatus de disponibilidad y/o de tiempo de entrega.<br />
+                        Acepto las condiciones de esta cotizaci&oacute;n y confirmo que al momento de pagarlo, se convierte en una orden de compra o pedido con las condiciones establecidas en la misma.</strong></p>
+                        
 				</div>
 			</div>
 

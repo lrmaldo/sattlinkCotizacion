@@ -17,15 +17,17 @@
 <style>
     /** Define the margins of your page **/
     @page {
-        margin: 100px 25px;
+        margin: 110px 28px;
     }
 
     header {
         position: fixed;
-        top: -60px;
+        top: -90px;
         left: 0px;
         right: 0px;
-        height: 50px;
+        height:35px;
+        padding-bottom: 1%;
+       
 
         /** Extra personal styles **/
         background-color: #ffffff;
@@ -33,7 +35,9 @@
         text-align: center;
         line-height: 35px;
     }
-
+    body {
+        margin: 3mm 4mm 2mm 4mm;
+            }
     footer {
         position: fixed; 
         bottom: 0px; 
@@ -53,14 +57,33 @@
 <body>
 
     <header>
-      
+        <?php $datos = App\datosfiscales::where('id',$id_datosfiscales)->first()?>
+        <table cellspacing="0" style="width: 100%; white-space:nowrap;">
+            <tr>
+        
+                <td style="width: 25%; color: #444444;">
+                    <img style="width: 200px;" src="./img/logo.png" alt="Logo"><br>
+                    
+                </td>
+                <td style="width: 50%;text-align:center">
+                    <p>{{$datos->nombre}}</p>
+                    <p>{{$datos->rfc}}</p>
+              
+                    {{-- <p>{{$datos}}</p> --}}
+                   
+                    
+                </td>
+                <td style="width: 25%;text-align:right">
+                Folio Nº {{$folio}}
+                </td>
+                
+            </tr>
+        </table>
     </header>
 
-    <footer>
-        Copyright  Sattlink &copy; <?php echo date("Y");?> 
-    </footer>
+   
   
-<main backtop="15mm" backbottom="15mm" backleft="15mm" backright="15mm" style="font-size: 12pt; font-family: arial" >
+<main  style="font-size: 12pt; font-family: arial; margin-top:17px" >
   {{--   <page_footer>
     <table class="page_footer">
         <tr>
@@ -75,33 +98,12 @@
     </table>
 </page_footer> --}}
 
-<?php $datos = App\datosfiscales::where('id',$id_datosfiscales)->first()?>
-<table cellspacing="0" style="width: 100%; white-space:nowrap;">
-    <tr>
 
-        <td style="width: 25%; color: #444444;">
-            <img style="width: 150px;" src="./img/logo.png" alt="Logo"><br>
-            
-        </td>
-        <td style="width: 50%;text-align:center">
-            <p>{{$datos->nombre}}</p>
-            <p>{{$datos->rfc}}</p>
-      
-            {{-- <p>{{$datos}}</p> --}}
-           
-            
-        </td>
-        <td style="width: 25%;text-align:right">
-        COTIZACION Nº {{$folio}}
-        </td>
-        
-    </tr>
-</table>
 
 <br>
     <table cellspacing="0" style="width: 100%; text-align: left; font-size: 10pt;">
 		<tr>
-		<td style="width:50%; "><strong>Dirección:</strong> <br>{{$datos->direccion}}<br> Teléfono.: (287)2222-2222</td>
+		<td style="width:50%; "><strong>Dirección:</strong> <br>{{$datos->direccion}}<br> Teléfono.: (287)8757734  / (229) 173 8806 </td>
 		
 		</tr>
 	</table>
@@ -124,10 +126,11 @@
 
         <tr>
            <?php $vendedor =App\User::where('id',$id_vendedor)->first(); ?>
-            <td style="width:15%; ">Atención:</td>
-            <td style="width:50%">{{$vendedor->name}}</td>
+            <td style="width:15%; ">Vendedor:</td>
+            <td style="width:50%">{{$vendedor->name}}   Correo: {{$vendedor->email}}</td>
+            <td style="width:50%">Correo: {{$vendedor->email}}</td>
 			<td style="width:15%;text-align:right"> </td>
-			<td style="width:20%">&nbsp; </td>
+			<td style="width:20%">&nbsp;  </td>
         </tr>
         <tr>
             @php
@@ -240,13 +243,15 @@
     <table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 11pt;padding:1mm;">
         
         <tr>
-            <th style="width: 87%; text-align: right;">IMPORTE TOTAL : </th>
+            <th style="width: 87%; text-align: right;">IMPORTE: </th>
         <th style="width: 13%; text-align: right;">&#36;{{number_format($importe,2)}}</th>
         </tr>
-        <tr>
+         @if ($cliente->descuento)
+         <tr>
             <th style="width: 87%; text-align: right;">DESCUENTO({{$cliente->descuento}}%): </th>
         <th style="width: 13%; text-align: right;">&#36;{{number_format($descuento_cliente,2)}}</th>
         </tr>
+         @endif
 
         <tr>
             <th style="width: 87%; text-align: right;">SUB-TOTAL: </th>
@@ -275,6 +280,15 @@
         </table>
     <br><br><br><br>
     </main>
+    <footer>
+        Copyright  Sattlink &copy; <?php echo date("Y");?> 
+        <br>
+        <p>Para mayor información: &nbsp; Tel: (287)8756019 &nbsp; 
+             <a href="mailto:info@sattlink.com">info@sattlink.com</a> &nbsp;
+            Horario de atención 9:00am a 7:00pm</p>
+
+        
+    </footer>
 </body>
 </html>
 

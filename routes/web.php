@@ -27,10 +27,10 @@ Route::post('/tipocambio','HomeController@tipocambio');
 Route::resource('/usuarios','UsersController');
 //Route::delete('/usuarios/destroy/{id}','UsersController@destroy');
 
-Route::get('/usuarios/destroy/{id}',[
+/* Route::get('/usuarios/destroy/{id}',[
 'as' =>'usuarios.destroy',
 'uses'=>'UsersController@destroy'
-]);
+]); */
 
 
 /* Rutas de clientes */

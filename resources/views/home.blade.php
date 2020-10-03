@@ -41,7 +41,13 @@
                     @foreach ($cotizaciones as $item)
                         <tr>
                         <td>{{$item->folio}}</td>
-                        <td>{{$item->cliente->nombre}}</td>
+                        
+                        @if (isset($item->cliente->nombre))
+                        <td>{{ $item->cliente->nombre}}</td>
+                        @else
+                        <td>**Cliente eliminado**</td>
+                        @endif
+                        
                         <td style="width: 5%">{{$item->vendedor->name}}</td>
                         <td style="text-align:right;"><script> var pesos = {{$item->total}};document.write(currencyFormat(pesos));</script></td>
                         <td style="text-align:right;">{{date_format($item->created_at,'d/m/Y h:i:s A')}}</td>

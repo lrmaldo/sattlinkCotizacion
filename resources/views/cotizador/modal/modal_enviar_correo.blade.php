@@ -16,7 +16,7 @@
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="form-group">
                             <label for="recipient-name" class="col-form-label">Email:</label>
-                        <input type="email" class="form-control" id="email{{$item->id}}" name="email{{$item->id}}" value="{{$item->cliente->email}}">
+                        <input type="email" class="form-control" id="email{{$item->id}}" name="email{{$item->id}}" value="{{isset($item->cliente->email)?$item->cliente->email:null}}">
                         </div>
                         <div class="form-group">
                             <label for="recipient-name" class="col-form-label">Asunto:</label>

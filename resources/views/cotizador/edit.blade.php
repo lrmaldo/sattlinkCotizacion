@@ -104,7 +104,7 @@
                                 <tr>
 
                                     <td style="width:15%; ">Nombre:</td>
-                                <td id="nombre_cliente" style="width:50%">{{$cotizacion->cliente->nombre}}</td>
+                                <td id="nombre_cliente" style="width:50%">{{isset($cotizacion->cliente->nombre)?$cotizacion->cliente->nombre:''}}</td>
                                     <td style="width:15%;text-align:right"></td>
                                     <td style="width:20%"></td>
                                     
@@ -112,23 +112,23 @@
                                 <tr>
 
                                     <td style="width:15%; ">Dirección:</td>
-                                <td id="direccion" style="width:50%">{{$cotizacion->cliente->direccion}}</td>
+                                <td id="direccion" style="width:50%">{{isset($cotizacion->cliente->direccion)?$cotizacion->cliente->direccion:''}}</td>
 
                                 </tr>
                                 <tr>
 
                                     <td style="width:15%; ">Teléfono:</td>
-                                <td id="telefono" style="width:50%">{{$cotizacion->cliente->telefono}}</td></td>
+                                <td id="telefono" style="width:50%">{{isset($cotizacion->cliente->telefono)?$cotizacion->cliente->telefono:''}}</td></td>
                                 </tr>
                                 <tr>
 
                                     <td style="width:15%; ">R.F.C.:</td>
-                                <td id="rfc" style="width:50%">{{$cotizacion->cliente->rfc}}</td></td>
+                                <td id="rfc" style="width:50%">{{isset($cotizacion->cliente->rfc)?$cotizacion->cliente->rfc:''}}</td></td>
                                 </tr>
                                 <tr>
 
                                     <td style="width:15%; ">Descuento:</td>
-                                <td id="descuentoCliente" style="width:50%">{{$cotizacion->cliente->descuento}}</td></td>
+                                <td id="descuentoCliente" style="width:50%">{{isset($cotizacion->cliente->descuento)?$cotizacion->cliente->descuento:''}}</td></td>
                                 </tr>
 
                             </table>

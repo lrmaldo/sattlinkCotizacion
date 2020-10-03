@@ -127,7 +127,7 @@
         <tr>
            <?php $vendedor =App\User::where('id',$id_vendedor)->first(); ?>
             <td style="width:15%; ">Vendedor:</td>
-            <td style="width:50%">{{$vendedor->name}}   Correo: {{$vendedor->email}}</td>
+            <td style="width:15%">{{$vendedor->name}}   </td>
             <td style="width:50%">Correo: {{$vendedor->email}}</td>
 			<td style="width:15%;text-align:right"> </td>
 			<td style="width:20%">&nbsp;  </td>

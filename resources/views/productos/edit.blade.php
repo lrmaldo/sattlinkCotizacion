@@ -3,11 +3,12 @@
 @section('content')
 
 <div class="container-fluid">
-    <h1 class="mt-4">Editar Cliente</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item "><a href="/Clientes">Clientes</a></li>
-    <li class="breadcrumb-item active">Cliente: {{$cliente->nombre}}</li>
-    </ol>
+  <h1 class="mt-4">Editar Producto o Servicio</h1>
+  <ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item "><a href="/home">Dashboard</a></li>
+      <li class="breadcrumb-item "><a href="/productos">Productos</a></li>
+      <li class="breadcrumb-item active">Crear producto o servicio</li>
+  </ol>
 
     <div class="card-body">
       <form role="form" method="POST" action="{{ route('clientes.update', $cliente->id) }}">

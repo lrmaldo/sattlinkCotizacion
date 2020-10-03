@@ -8,7 +8,8 @@
 <div class="container-fluid">
     <h1 class="mt-4">Nuevo Producto o Servicio</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item "><a href="/Productos">Productos</a></li>
+      <li class="breadcrumb-item "><a href="/home">Dashboard</a></li>
+        <li class="breadcrumb-item "><a href="/productos">Productos</a></li>
         <li class="breadcrumb-item active">Crear producto o servicio</li>
     </ol>
 

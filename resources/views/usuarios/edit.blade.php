@@ -4,6 +4,7 @@
     <div class="container-fluid">
         <h1 class="mt-4">Usuarios</h1>
         <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item "><a href="/home">Dashboard</a></li>
             <li class="breadcrumb-item "><a href="/usuarios">Usuarios</a></li>
             <li class="breadcrumb-item active">Editar usuario {{ $user->name }}</li>
         </ol>

@@ -11,7 +11,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="_token" content="{{ csrf_token() }}">
-    <link rel="icon" type="image/x-icon" href="img/icon.ico" />
+    <link rel="icon" type="image/x-icon" href="{{asset('img/icon.ico')}}" />
 
     <title>Sattlink - Cotización</title>
 

@@ -71,11 +71,14 @@
                             <option value=''>Seleccionar un cliente</option>
                             @foreach (App\clientes::get() as $item)
                                 @php
-                                    if($item->id == $cotizacion->cliente->id){
+                                    if(isset($cotizacion->cliente->id)){
+                                        if($item->id == $cotizacion->cliente->id){
                                         $select = "selected";
                                     }else{
                                         $select ="";
                                     }
+                                    }
+                                   
                                     
                                 @endphp
                                 <option value='{{ $item->id }}' {{$select}}>{{ $item->nombre }}</option>

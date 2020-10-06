@@ -270,7 +270,7 @@
     </table>
 	*** Precios incluyen IVA ***
 	
-	<br>
+	
           <table cellspacing="0" style="width: 100%; text-align: center; font-size: 10pt;">
             <tr>
                     <td style="width:50%;"><?php echo $comentario ?> </td>
@@ -278,17 +278,18 @@
             </tr>
 			
         </table>
-    <br><br><br><br>
+        <footer>
+            Copyright  Sattlink &copy; <?php echo date("Y");?> 
+            <br>
+            <p>Para mayor información: &nbsp; Tel: (287)8756019 &nbsp; 
+                 <a href="mailto:info@sattlink.com">info@sattlink.com</a> &nbsp;
+                Horario de atención 9:00am a 7:00pm</p>
+    
+            
+        </footer>
+    
     </main>
-    <footer>
-        Copyright  Sattlink &copy; <?php echo date("Y");?> 
-        <br>
-        <p>Para mayor información: &nbsp; Tel: (287)8756019 &nbsp; 
-             <a href="mailto:info@sattlink.com">info@sattlink.com</a> &nbsp;
-            Horario de atención 9:00am a 7:00pm</p>
-
-        
-    </footer>
+    
 </body>
 </html>
 

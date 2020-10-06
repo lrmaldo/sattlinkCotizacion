@@ -47,8 +47,12 @@
                         @else
                         <td>**Cliente eliminado**</td>
                         @endif
-                        
+                        @if (isset($item->vendedor->name))
                         <td style="width: 5%">{{$item->vendedor->name}}</td>
+                        @else
+                        <td style="width: 5%">**vendedor no existe**</td>
+                        @endif
+                       
                         <td style="text-align:right;"><script> var pesos = {{$item->total}};document.write(currencyFormat(pesos));</script></td>
                         <td style="text-align:right;">{{date_format($item->created_at,'d/m/Y h:i:s A')}}</td>
                        {{--  <td style="text-align:center;">{{date_format($item->updated_at,'d/m/Y h:i:s A')}}</td> --}}

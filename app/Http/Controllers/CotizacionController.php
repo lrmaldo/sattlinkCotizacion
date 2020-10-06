@@ -949,7 +949,7 @@ class CotizacionController extends Controller
         //cambiar por un like
         $producto = productos::where("id", '=', $request->id_producto)->first();
 
-        $exite_prod = detalle_cotizacion::where('id_cotizacion', $id)->first();
+        $exite_prod = detalle_cotizacion::where('id_cotizacion', $id)->where('id_producto','=',$request->id_producto)->first();/* si exite en el cotizador y en el producto */
         if ($exite_prod) {
             $cantidadpre = detalle_cotizacion::find($exite_prod->id);
             $cantidadpre->cantidad = $request->cantidad;

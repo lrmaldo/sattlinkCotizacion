@@ -142,8 +142,22 @@
                         </div>
                         <div class="form-group">
                             <label for="recipient-name" class="col-form-label">Precio:</label>
-                            <input id="precio" name="precio" type="number" min="0" step="0.01" class="form-control">
+                            <input id="precio" name="precio" type="text"  class="form-control">
                         </div>
+                        <script>
+                            $('#precio').keypress(function(eve) {
+                                if ((eve.which != 46 || $(this).val().indexOf('.') != -1) && (eve.which < 48 || eve
+                                        .which > 57) || (eve.which == 46 && $(this).caret().start == 0)) {
+                                    eve.preventDefault();
+                                }
+                                // this part is when left part of number is deleted and leaves a . in the leftmost position. For example, 33.25, then 33 is deleted
+                                $('#precio').keyup(function(eve) {
+                                    if ($(this).val().indexOf('.') == 0) {
+                                        $(this).val($(this).val().substring(1));
+                                    }
+                                });
+                            });
+                        </script>
 
 
                 </div>

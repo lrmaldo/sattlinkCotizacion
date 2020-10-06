@@ -83,7 +83,7 @@
 
    
   
-<main  style="font-size: 12pt; font-family: arial; margin-top:17px" >
+<main  style="font-size: 10pt; font-family: arial; margin-top:13px" >
   {{--   <page_footer>
     <table class="page_footer">
         <tr>
@@ -271,7 +271,7 @@
 	*** Precios incluyen IVA ***
 	
 	<br>
-          <table cellspacing="0" style="width: 100%; text-align: center; font-size: 11pt;">
+          <table cellspacing="0" style="width: 100%; text-align: center; font-size: 10pt;">
             <tr>
                     <td style="width:50%;"><?php echo $comentario ?> </td>
                   

@@ -435,13 +435,14 @@
         }
 
         //eliminar producto de la tabla de contizaciones
-       function eliminar(){
+       function eliminar(id_producto){
            
        var token = '{{ csrf_token() }}'; // ó $("#token").val() si lo tienes en una etiqueta html.
             //var id_producto;
             var cantidad = $("#cantidad_producto").val();
 
-            var id = $('#id_eliminar').val(); //id del producto en tmp
+            /* var id = $('#id_eliminar'+id).val(); */ //id del producto en tmp
+            var id = id_producto;
            /*  console.log(id); */
             var quitarp = document.getElementById('descuentoCliente').innerHTML;
             var descuentoC = quitarp.replace('%', ''); //le quita el simbolo porcentaje
@@ -454,7 +455,7 @@
             var data = {
                 _token: token,
                 descuento_cliente: descuentoC,
-                id: id,
+                id: id,/* producto  */
                 id_cotizacion: id_cotizacion
             };
             $.ajax({

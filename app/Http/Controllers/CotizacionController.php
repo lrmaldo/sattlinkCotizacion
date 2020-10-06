@@ -864,7 +864,7 @@ class CotizacionController extends Controller
             
             <td>
             <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
-            <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$item->id' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+            <button type='button' class='btn btn-danger' onclick='eliminar($item->id_producto)' 'value='$item->id' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
             </td>                 
         </tr>";
             }
@@ -1004,7 +1004,7 @@ class CotizacionController extends Controller
             
             <td>
             <input type='hidden' id='id_eliminar' name='id_eliminar' value='$item->id' />
-        <button type='button' class='btn btn-danger' onclick='eliminar()' 'value='$item->id' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
+        <button type='button' class='btn btn-danger' onclick='eliminar($item->id_producto)' 'value='$item->id' id='btn-eliminar'  > <i class='fa fa-trash' aria-hidden='true'></i> </button> 
             </td>                 
         </tr>";
         }
@@ -1128,8 +1128,8 @@ class CotizacionController extends Controller
     }
     public function destroy_producto(Request $request)
     {
-        /* return $request->all(); */
-        $elimino =detalle_cotizacion::where('id','=', $request->id)
+       /*  return $request->all(); */
+        $elimino =detalle_cotizacion::where('id_producto','=', $request->id)
                         ->where('id_cotizacion','=',$request->id_cotizacion)->delete();
                         return $elimino;
         

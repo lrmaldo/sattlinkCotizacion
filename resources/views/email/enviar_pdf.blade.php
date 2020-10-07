@@ -33,7 +33,7 @@
             bottom: 0cm;
             left: 0cm;
             right: 0cm;
-            height: 3cm;
+            height: 4cm;
             background-color:#ff5709ee;
             color: white;
             text-align: center;
@@ -74,7 +74,7 @@
              <br> &nbsp;
               Horario de atención 9:00am a 7:00pm
            
-            <div style="margin-bottom: 6%; padding-bottom: 3em;  text-align: center;">
+            <div>
                 <a style="color: white;" href="http://cotizacion.sattlink.com/politica">Aviso de Privacidad</a>
                 &middot;
                 <a style="color: white;" href="http://cotizacion.sattlink.com/terminos">Terminos &amp; Condiciones</a>

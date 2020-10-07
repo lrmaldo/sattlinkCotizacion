@@ -275,7 +275,7 @@
             <tr>
                     <td style="width:50%;"><?php echo $comentario ?> 
                         <br>
-                        @if ($datos->id=1)
+                        @if ($datos->id==1)
                         <img src="./img/enlace.jpeg" width="80%" height="200px" alt="">    
                         @else
                         

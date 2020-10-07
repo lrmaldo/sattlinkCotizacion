@@ -283,6 +283,7 @@
 			
         </table>
         <div style="text-align: center">
+            
             @if ($datos->id==1)
             <img src="./img/enlace.jpeg" width="80%" height="200px" alt="">    
             @else

@@ -273,7 +273,16 @@
 	
           <table cellspacing="0" style="width: 100%; text-align: center; font-size: 10pt;">
             <tr>
-                    <td style="width:50%;"><?php echo $comentario ?> </td>
+                    <td style="width:50%;"><?php echo $comentario ?> 
+                        <br>
+                        @if ($datos->id=1)
+                        <img src="./img/enlace.jpeg" width="80%" height="200px" alt="">    
+                        @else
+                        
+                        <img src="./img/sara.jpeg" width="80%" height="200px" alt="">
+                        @endif
+                    </td>
+         
                   
             </tr>
 			

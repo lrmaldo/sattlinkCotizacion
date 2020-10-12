@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title></title>
 
@@ -73,11 +73,9 @@
              Blvd. Manuel Ávila Camacho No. 523 Local 5, Plaza Santa Fe, Col. María Luisa C.P. 68310 Tuxtepec, Oaxaca. 
              <br> &nbsp;
               Horario de atención 9:00am a 7:00pm
-           
-            
-                <a style="color: white;" href="http://cotizacion.sattlink.com/politica">Aviso de Privacidad</a>
+                <a  href="http://cotizacion.sattlink.com/politica">Aviso de Privacidad</a>
                 &middot;
-                <a style="color: white;" href="http://cotizacion.sattlink.com/terminos">Terminos &amp; Condiciones</a>
+                <a  href="http://cotizacion.sattlink.com/terminos">Terminos &amp; Condiciones</a>
          </p>
             
             </footer>

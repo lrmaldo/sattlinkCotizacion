@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>Cotizacion {{$folio}}</title>
+<title>Cotizacion A{{$folio}}</title>
 <style>
     /** Define the margins of your page **/
     @page {
@@ -74,7 +74,7 @@
                     
                 </td>
                 <td style="width: 25%;text-align:right">
-                Folio Nº {{$folio}}
+                Folio Nº A{{$folio}}
                 </td>
                 
             </tr>
@@ -103,7 +103,7 @@
 <br>
     <table cellspacing="0" style="width: 100%; text-align: left; font-size: 10pt;">
 		<tr>
-		<td style="width:50%; "><strong>Dirección:</strong> <br>{{$datos->direccion}}<br> Teléfono.: (287)8757734  / (229) 173 8806 </td>
+		<td style="width:50%; "><strong>Dirección:</strong> <br>{{$datos->direccion}}<br> Teléfono.: (287)8756019  / (229) 173 8806 </td>
 		
 		</tr>
 	</table>
@@ -156,7 +156,7 @@
         </tr>
     </table> --}}
 
-    <table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;padding:1mm;">
+    <table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 9pt;padding:1mm;">
         <tr>
             <th style="width: 5%">U.M.</th>
             <th style="width: 5%">CANT.</th>
@@ -166,7 +166,7 @@
             
         </tr>
     </table>
-    <table cellspacing="0" style="width: 100%; border: solid 1px black;  text-align: center; font-size: 11pt;padding:1mm;">
+    <table cellspacing="0" style="width: 100%; border: solid 1px black;  text-align: center; font-size: 9pt;padding:1mm;">
         @php
             $detalle_cotizacion = App\detalle_cotizacion::where('id_cotizacion',$id)->get();
             $sumador=0;
@@ -240,7 +240,7 @@
           
           
       @endphp
-    <table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 11pt;padding:1mm;">
+    <table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 9pt;padding:1mm;">
         
         <tr>
             <th style="width: 87%; text-align: right;">IMPORTE: </th>
@@ -271,7 +271,7 @@
 	*** Precios incluyen IVA ***
 	
 	
-          <table cellspacing="0" style="width: 100%; text-align: center; font-size: 10pt;">
+          <table cellspacing="0" style="width: 100%; text-align: center; font-size: 9pt;">
             <tr>
                     <td style="width:50%;"><?php echo $comentario ?> 
                        

@@ -40,7 +40,7 @@
                 <tbody>
                     @foreach ($cotizaciones as $item)
                         <tr>
-                        <td>{{$item->folio}}</td>
+                        <td>A{{$item->folio}}</td>
                         
                         @if (isset($item->cliente->nombre))
                         <td>{{ $item->cliente->nombre}}</td>
